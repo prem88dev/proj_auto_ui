@@ -1,0 +1,11 @@
+label {
+ width: 100px;
+ text-align: right;
+ margin: 10px;
+}
+
+#bookTitle, #bookCatg, #bookSub, #bookPub {
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: black;
+}

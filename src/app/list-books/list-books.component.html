@@ -1,0 +1,43 @@
+<h3>Books List </h3>
+
+<ng-container *ngIf="books==null || books.length==0; then showErr; else showBooks"></ng-container>
+
+<ng-template #showErr>
+  <div class="card-bg-warning">
+    <p class="card-text">No Books Found</p>
+  </div>
+</ng-template>
+
+<ng-template #showBooks>
+  <table class="table table-condensed table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Select</th>
+        <th>Book#</th>
+        <th>Title</th>
+        <th>Category</th>
+        <th>Subject</th>
+        <th>Date Of Publish</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let b of books">
+        <td style="text-align: center;">
+          <div class="radio">
+            <label><input type="radio" id='{{b.bookCode}}' name="optradio"></label>
+          </div>
+        </td>
+        <td>{{b.bookCode}}</td>
+        <td>{{b.title}}</td>
+        <td>{{b.category}}</td>
+        <td>{{b.subject}}</td>
+        <td>{{b.dateOfPublish|date:'dd-MMM-yyyy'}}</td>
+      </tr>
+    </tbody>
+  </table>
+  <table>
+    <input class="btn btn-sm btn-success m-1" style="font-weight:bold;cursor:pointer;" value="E d i t" readonly />
+    <input class="btn btn-sm btn-warning m-2" style="font-weight:bold;cursor:pointer;" value="M o v e" readonly />
+    <input class="btn btn-sm btn-danger m-2" style="font-weight:bold;cursor:pointer;" value="D e l e t e" readonly />
+  </table>
+</ng-template>

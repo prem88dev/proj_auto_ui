@@ -1,0 +1,19 @@
+<ng-container *ngIf="dataReceived==true; then showProjectList;"></ng-container>
+<ng-template #showProjectList>
+   <h3>Project List</h3>
+   &nbsp;
+   <p style="font-style: italic;">&emsp;Click on each row to view project-wise revenue</p>
+   <table class="table table-condensed table-bordered table-striped" style="width: 500px">
+      <thead>
+         <th *ngFor="let colName of columns">{{colName}}</th>
+      </thead>
+      <tbody>
+         <tr *ngFor="let project of projects" [routerLink]="['/projectRevenue/', project._id, this.currentYear]">
+            <td>{{project._id}}</td>
+            <td>
+               <ol *ngFor="let description of project.description">{{description.name}}</ol>
+            </td>
+         </tr>
+      </tbody>
+   </table>
+</ng-template>
