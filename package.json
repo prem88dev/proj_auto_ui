@@ -54,7 +54,7 @@
     "protractor": "~7.0.0",
     "ts-node": "~8.10.2",
     "tslint": "~6.1.2",
-    "typescript": "~3.9.5"
+    "typescript": "^3.8.3"
   },
   "description": "This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.0.",
   "main": "index.js",
