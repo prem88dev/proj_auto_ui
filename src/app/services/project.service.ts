@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Project } from '../models/project'
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +25,7 @@ export class ProjectService {
 
   public projectList() {
     const listProjUrl = "http://localhost:5454/projectList";
-    return this.httpClient.get<Project[]>(listProjUrl).pipe(catchError(this.handleError));
+    return this.httpClient.get(listProjUrl).pipe(catchError(this.handleError));
   }
 
   public projectRevenue(esaId: string, revenueYear: string) {

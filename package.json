@@ -20,6 +20,8 @@
     "@angular/platform-browser-dynamic": "~9.1.9",
     "@angular/router": "~9.1.9",
     "@popperjs/core": "^2.4.1",
+    "ag-grid-angular": "^23.2.0",
+    "ag-grid-community": "^23.2.0",
     "ajv": "^6.9.1",
     "angular-bootstrap-datetimepicker": "^4.0.2",
     "bootstrap": "^4.3.1",
