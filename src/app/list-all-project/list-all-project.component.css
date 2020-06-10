@@ -8,6 +8,8 @@ td {
     padding: 10px;
     text-align: left;
     width: 25px;
+    text-align: left;
+    vertical-align: middle;
 }
 
 th {

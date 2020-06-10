@@ -1,8 +1,7 @@
 <ng-container *ngIf="dataReceived==true; then showDashboard;"></ng-container>
 <ng-template #showDashboard>
-  <h3>Project Dashboard</h3>
-  &nbsp;
-  <p style="font-style: italic;">&emsp;Click on each row to view project-wise revenue</p>
+  <p></p>
+  <p style="font-style: italic;">&emsp;Click on each row to view employee-wise revenue</p>
   <table class="table table-condensed table-bordered table-striped">
     <thead>
       <th *ngFor=" let colName of columns">{{colName}}</th>
