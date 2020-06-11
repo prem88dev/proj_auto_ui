@@ -1,4 +1,4 @@
-tr:hover td{
+.projectRevenue:hover td{
    background-color: cornflowerblue;
    cursor: pointer;
 }

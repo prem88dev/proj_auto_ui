@@ -13,9 +13,9 @@ export class DashboardComponent implements OnInit {
 
   private dashboard = [];
   private columns = [];
-  private index = ["esaId", "revenue"];
-  private dataReceived:Boolean = false;
+  private dataReceived: Boolean = false;
   private currentYear = new Date().getFullYear().toString();
+
   destroy$: Subject<Boolean> = new Subject<Boolean>();
 
   constructor(
@@ -28,7 +28,8 @@ export class DashboardComponent implements OnInit {
     if (yearParam !== null && yearParam !== "") {
       this.currentYear = yearParam;
     }
-    this.columns = ["Project ID",
+    this.columns = [
+      "Project ID",
       "Jan-" + this.currentYear,
       "Feb-" + this.currentYear,
       "Mar-" + this.currentYear,

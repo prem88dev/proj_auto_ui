@@ -2,17 +2,29 @@
 <ng-template #showDashboard>
   <p></p>
   <p style="font-style: italic;">&emsp;Click on each row to view employee-wise revenue</p>
-  <table class="table table-condensed table-bordered table-striped">
-    <thead>
-      <th *ngFor=" let colName of columns" style="font-style: italic;">{{colName}}</th>
-    </thead>
-    <tbody>
-      <tr *ngFor="let project of dashboard" [routerLink]="['/projectRevenue/', project.esaId, this.currentYear]">
-        <td style="font-style: italic; font-weight: bold;">{{project.esaId}}</td>
-        <td style="text-align: right;" *ngFor="let revenue of project.revenue">
-          {{(revenue.revenueAmount/100) | currency:"$&nbsp;"}}
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div style="margin-left: 50px; margin-right: 50px;">
+    <table class="table table-condensed table-bordered table-striped">
+      <thead>
+        <th style="font-style: italic; text-align: center; vertical-align: middle;" *ngFor=" let colName of columns;">{{colName}}</th>
+      </thead>
+      <tbody *ngFor="let project of dashboard; last as isLast">
+        <ng-container *ngIf="isLast; then grandTotal; else projectRevenue"></ng-container>
+        <ng-template #projectRevenue>
+          <tr class="projectRevenue" *ngIf="!isLast" [routerLink]="['/projectRevenue/', project.esaId, this.currentYear]">
+            <td style="text-align: left; font-style: italic; font-weight: bold;">{{project.esaId}}</td>
+            <td style="text-align: right;" *ngFor="let revenue of project.revenue">{{(revenue.revenueAmount/100) | currency:"$&nbsp;"}}
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template #grandTotal>
+          <tr class="grandTotal" *ngIf="isLast">
+            <td style="text-align: left; font-style: italic; font-weight: bold;">{{project.esaId}}</td>
+            <td style="text-align: right; font-weight: bold;" *ngFor="let revenue of project.revenue">
+              {{(revenue.revenueAmount/100) | currency:"$&nbsp;"}}
+            </td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+  </div>
 </ng-template>
