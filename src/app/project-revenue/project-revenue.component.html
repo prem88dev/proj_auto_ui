@@ -1,3 +1,113 @@
-<p>
-  project-revenue works!
-</p>
+<ng-container *ngIf="dataReceived == true; then showRevenue;"></ng-container>
+<ng-template #showRevenue>
+  <div style="margin-left:75px; margin-right: 50px;">
+    <p></p>
+    <h4 style="font-style: italic; font-weight: lighter;">
+      {{empBaseDtls.esaId}} &ndash; {{empBaseDtls.esaDesc}}</h4>
+    &nbsp;
+    <div>
+      <tbody>
+        <tr style="font-style: italic; font-weight: bolder;">
+          <td>
+            <h2>{{empBaseDtls.empLname}},&ensp;{{empBaseDtls.empFname}}&ensp;</h2>
+          </td>
+          <td>
+            <h3>(&thinsp;{{empBaseDtls.ctsEmpId}}&thinsp;)</h3>
+          </td>
+        </tr>
+      </tbody>
+    </div>
+    <p></p>
+    <div>
+      <tbody>
+        <tr style="font-style: italic; font-size: large;">
+          <td style="padding-left: 30px;">Project allocation&thinsp;:&nbsp;&nbsp;</td>
+          <td style="font-weight: bold;">{{empBaseDtls.sowStart | date: 'd-MMM-yyyy'}}</td>
+          <td style="padding-left: 10px; text-align: center;">to</td>
+          <td style="font-weight: bold;">&nbsp;&nbsp;{{empBaseDtls.sowStop | date: 'd-MMM-yyyy'}}</td>
+          <ng-container *ngIf="empBaseDtls.foreseenSowStop; then showForeSeen;"></ng-container>
+          <ng-template #showForeSeen>
+            <td>&nbsp;&nbsp;(&thinsp;with a foreseeable extension upto&ensp;</td>
+            <td style="font-weight: bold; padding-left: 1px;">{{empBaseDtls.foreseenSowStop}}</td>
+            <td>&thinsp;)</td>
+          </ng-template>
+        </tr>
+      </tbody>
+    </div>
+    <br>
+    <div>
+      <tbody>
+        <tr style="font-style: italic; font-size: large;">
+          <td style="text-align: right; padding-left: 30px;">Working hours&thinsp;:&nbsp;&nbsp;</td>
+          <td style="font-weight: bold; padding-right: 10px;">{{empBaseDtls.wrkHrPerDay}}</td>
+          <td style="text-align: right; padding-left: 30px;">Billing rate&thinsp;:&nbsp;&nbsp;</td>
+          <ng-container *ngIf="empBaseDtls.currency == 'USD'; then showDollar; else rupeeCheck"></ng-container>
+          <ng-template #showDollar>
+            <td style="font-weight: bold; padding-right: 10px;">{{empBaseDtls.billRatePerHr/100 | currency: $}}</td>
+          </ng-template>
+          <ng-template #rupeeCheck>
+            <ng-container *ngIf="empBaseDtls.currency == 'INR'; then showRupee; else noCurrency"></ng-container>
+          </ng-template>
+          <ng-template #showRupee>
+            <td style="text-align: right; padding-left: 30px;">Billing rate&thinsp;:&nbsp;&nbsp;</td>
+            <td style="font-weight: bold; padding-right: 10px;">{{empBaseDtls.billRatePerHr/100 | currency: '&#8377;'}}
+            </td>
+          </ng-template>
+          <ng-template #noCurrency>
+            <td style="text-align: right; padding-left: 30px;">Billing rate&thinsp;:&nbsp;&nbsp;</td>
+            <td style="font-weight: bold; padding-right: 10px;">{{empBaseDtls.billRatePerHr/100}}</td>
+          </ng-template>
+          <td style="text-align: right; padding-left: 30px;">Location&thinsp;:&nbsp;&nbsp;</td>
+          <td style="font-weight: bold;">{{empBaseDtls.cityName}}&ensp;</td>
+          <td>(&thinsp;{{empBaseDtls.siteInd}}&thinsp;)</td>
+        </tr>
+      </tbody>
+    </div>
+    <b></b>
+    <div>
+      <tbody>
+        <tr style="font-style: italic; font-size: large;">
+          <td style="text-align: right; padding-left: 30px;">Lowes UID&thinsp;:&nbsp;&nbsp;</td>
+          <td style="font-weight: bold;" *ngIf="empBaseDtls.lowesUid">{{empBaseDtls.lowesUid}}</td>
+          <td style="font-weight: lighter;" *ngIf="!empBaseDtls.lowesUid">[ No Data ]</td>
+          <td style="text-align: right; padding-left: 30px;">Department&thinsp;:&nbsp;&nbsp;</td>
+          <td style="font-weight: bold;" *ngIf="empBaseDtls.deptName">{{empBaseDtls.deptName}}</td>
+          <td style="font-weight: lighter;" *ngIf="!empBaseDtls.deptName">[ No Data ]</td>
+        </tr>
+      </tbody>
+    </div>
+    &nbsp;
+  </div>
+  <div style="margin-left:100px; margin-right: 50px;">
+    <tr>
+      <ng-container *ngFor="let revenueObj of revenue; let revObjIdx = index;">
+        <ng-container *ngIf="revObjIdx <= 5; then janToJun"></ng-container>
+        <ng-template #janToJun>
+          <td style="padding: 10px 10px 10px 10px;">
+            <div class="card">
+              <div class="container">
+                <h5 style="font-style: italic; padding-top: 15px; padding-left: 5px;">{{revenueObj.revenueMonth}}</h5>
+              </div>
+            </div>
+          </td>
+        </ng-template>
+      </ng-container>
+    </tr>
+  </div>
+  <div style="margin-left:100px; margin-right: 50px;">
+    <tr>
+      <ng-container *ngFor="let revenueObj of revenue; let revObjIdx = index;">
+        <ng-container *ngIf="revObjIdx > 5 && revObjIdx <= 11; then julToDec"></ng-container>
+        <ng-template #julToDec>
+          <td style="padding: 10px 10px 10px 10px;">
+            <div class="card">
+              <div class="container">
+                <h5 style="font-style: italic; padding-top: 15px; padding-left: 5px;">{{revenueObj.revenueMonth}}</h5>
+              </div>
+            </div>
+          </td>
+        </ng-template>
+      </ng-container>
+    </tr>
+  </div>
+</ng-template>

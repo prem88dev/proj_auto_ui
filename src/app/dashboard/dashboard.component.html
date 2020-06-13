@@ -10,18 +10,16 @@
       <tbody *ngFor="let project of dashboard; last as isLast">
         <ng-container *ngIf="isLast; then grandTotal; else projectRevenue"></ng-container>
         <ng-template #projectRevenue>
-          <tr class="projectRevenue" *ngIf="!isLast" [routerLink]="['/projectRevenue/', project.esaId, this.currentYear]">
+          <tr class="projectRevenue" [routerLink]="['/projectRevenue/', project.esaId, this.currentYear]">
             <td style="text-align: left; font-style: italic; font-weight: bold;">{{project.esaId}}</td>
-            <td style="text-align: right;" *ngFor="let revenue of project.revenue">{{(revenue.revenueAmount/100) | currency:"$&nbsp;"}}
+            <td style="text-align: right;" *ngFor="let revenue of project.revenue">{{(revenue.revenueAmount/100) | currency:"$"}}
             </td>
           </tr>
         </ng-template>
         <ng-template #grandTotal>
-          <tr class="grandTotal" *ngIf="isLast">
+          <tr class="grandTotal">
             <td style="text-align: left; font-style: italic; font-weight: bold;">{{project.esaId}}</td>
-            <td style="text-align: right; font-weight: bold;" *ngFor="let revenue of project.revenue">
-              {{(revenue.revenueAmount/100) | currency:"$&nbsp;"}}
-            </td>
+            <td style="text-align: right; font-weight: bold;" *ngFor="let revenue of project.revenue">{{(revenue.revenueAmount/100) | currency:"$"}}</td>
           </tr>
         </ng-template>
       </tbody>
