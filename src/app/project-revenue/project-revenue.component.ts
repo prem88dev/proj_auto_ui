@@ -19,6 +19,10 @@ export class ProjectRevenueComponent implements OnInit {
   private locSplWrk = "";
   private buffer = "";
   private revenue = [];
+  private sowStart = "";
+  private sowStop = "";
+  private sowForesee = "";
+  private stopWithoutForesee = false;
   private dataReceived: Boolean = false;
   private currentYear = new Date().getFullYear();
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -45,6 +49,25 @@ export class ProjectRevenueComponent implements OnInit {
       this.locSplWrk = this.empObj[3].specialWorkDays.locSplWrk;
       this.buffer = this.empObj[4].buffers;
       this.revenue = this.empObj[5].revenue;
+
+      let sowDate = this.empBaseDtls["sowStart"];
+      let splitStr = sowDate.split("-");
+      this.sowStart = splitStr[1] + "-" + splitStr[2];
+
+      sowDate = this.empBaseDtls["sowStop"];
+      splitStr = sowDate.split("-");
+      this.sowStop = splitStr[1] + "-" + splitStr[2];
+
+      sowDate = this.empBaseDtls["foreseenSowStop"];
+      if (sowDate.length > 0) {
+        splitStr = sowDate.split("-");
+        this.sowForesee = splitStr[1] + "-" + splitStr[2];
+      }
+
+      if (this.sowStop.length > 0 && this.sowForesee.length === 0) {
+        this.stopWithoutForesee = true;
+      }
+
       this.dataReceived = true;
     });
   }

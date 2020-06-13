@@ -81,10 +81,59 @@
   <div style="margin-left:100px; margin-right: 50px;">
     <tr>
       <ng-container *ngFor="let revenueObj of revenue; let revObjIdx = index;">
-        <ng-container *ngIf="revObjIdx <= 5; then janToJun"></ng-container>
-        <ng-template #janToJun>
+        <ng-container *ngIf="revObjIdx <= 5; then checkStartMarker"></ng-container>
+        <ng-template #checkStartMarker>
+          <ng-container *ngIf="sowStart == revenueObj.revenueMonth; then sowStartMonth; else checkStopMarker">
+          </ng-container>
+        </ng-template>
+        <ng-template #checkStopMarker>
+          <ng-container *ngIf="sowStop == revenueObj.revenueMonth; then sowStopMonth; else checkForeseeMarker">
+          </ng-container>
+        </ng-template>
+        <ng-template #checkForeseeMarker>
+          <ng-container *ngIf="sowForesee == revenueObj.revenueMonth; then sowForeseeMonth; else ordMonth">
+          </ng-container>
+        </ng-template>
+        <ng-template #sowStartMonth>
           <td style="padding: 10px 10px 10px 10px;">
-            <div class="card">
+            <div class="soStartMarker">
+              <div class="container">
+                <h5 style="font-style: italic; padding-top: 15px; padding-left: 5px;">{{revenueObj.revenueMonth}}</h5>
+              </div>
+            </div>
+          </td>
+        </ng-template>
+        <ng-template #sowStopMonth>
+          <td style="padding: 10px 10px 10px 10px;">
+            <ng-container *ngIf="stopWithoutForesee == true; then noForesee; else foreseeStop"></ng-container>
+            <ng-template #noForesee>
+              <div class="soForeseeMarker">
+                <div class="container">
+                  <h5 style="font-style: italic; padding-top: 15px; padding-left: 5px;">{{revenueObj.revenueMonth}}</h5>
+                </div>
+              </div>
+            </ng-template>
+            <ng-template #foreseeStop>
+              <div class="soStopMarker">
+                <div class="container">
+                  <h5 style="font-style: italic; padding-top: 15px; padding-left: 5px;">{{revenueObj.revenueMonth}}</h5>
+                </div>
+              </div>
+            </ng-template>
+          </td>
+        </ng-template>
+        <ng-template #sowForeseeMonth>
+          <td style="padding: 10px 10px 10px 10px;">
+            <div class="soForeseeMarker">
+              <div class="container">
+                <h5 style="font-style: italic; padding-top: 15px; padding-left: 5px;">{{revenueObj.revenueMonth}}</h5>
+              </div>
+            </div>
+          </td>
+        </ng-template>
+        <ng-template #ordMonth>
+          <td style="padding: 10px 10px 10px 10px;">
+            <div class="ordMonth">
               <div class="container">
                 <h5 style="font-style: italic; padding-top: 15px; padding-left: 5px;">{{revenueObj.revenueMonth}}</h5>
               </div>
@@ -97,10 +146,59 @@
   <div style="margin-left:100px; margin-right: 50px;">
     <tr>
       <ng-container *ngFor="let revenueObj of revenue; let revObjIdx = index;">
-        <ng-container *ngIf="revObjIdx > 5 && revObjIdx <= 11; then julToDec"></ng-container>
-        <ng-template #julToDec>
+        <ng-container *ngIf="revObjIdx > 5 && revObjIdx <= 11; then checkStartMarker"></ng-container>
+        <ng-template #checkStartMarker>
+          <ng-container *ngIf="sowStart == revenueObj.revenueMonth; then sowStartMonth; else checkStopMarker">
+          </ng-container>
+        </ng-template>
+        <ng-template #checkStopMarker>
+          <ng-container *ngIf="sowStop == revenueObj.revenueMonth; then sowStopMonth; else checkForeseeMarker">
+          </ng-container>
+        </ng-template>
+        <ng-template #checkForeseeMarker>
+          <ng-container *ngIf="sowForesee == revenueObj.revenueMonth; then sowForeseeMonth; else ordMonth">
+          </ng-container>
+        </ng-template>
+        <ng-template #sowStartMonth>
           <td style="padding: 10px 10px 10px 10px;">
-            <div class="card">
+            <div class="soStartMarker">
+              <div class="container">
+                <h5 style="font-style: italic; padding-top: 15px; padding-left: 5px;">{{revenueObj.revenueMonth}}</h5>
+              </div>
+            </div>
+          </td>
+        </ng-template>
+        <ng-template #sowStopMonth>
+          <td style="padding: 10px 10px 10px 10px;">
+            <ng-container *ngIf="stopWithoutForesee == true; then noForesee; else foreseeStop"></ng-container>
+            <ng-template #noForesee>
+              <div class="soForeseeMarker">
+                <div class="container">
+                  <h5 style="font-style: italic; padding-top: 15px; padding-left: 5px;">{{revenueObj.revenueMonth}}</h5>
+                </div>
+              </div>
+            </ng-template>
+            <ng-template #foreseeStop>
+              <div class="soStopMarker">
+                <div class="container">
+                  <h5 style="font-style: italic; padding-top: 15px; padding-left: 5px;">{{revenueObj.revenueMonth}}</h5>
+                </div>
+              </div>
+            </ng-template>
+          </td>
+        </ng-template>
+        <ng-template #sowForeseeMonth>
+          <td style="padding: 10px 10px 10px 10px;">
+            <div class="soForeseeMarker">
+              <div class="container">
+                <h5 style="font-style: italic; padding-top: 15px; padding-left: 5px;">{{revenueObj.revenueMonth}}</h5>
+              </div>
+            </div>
+          </td>
+        </ng-template>
+        <ng-template #ordMonth>
+          <td style="padding: 10px 10px 10px 10px;">
+            <div class="ordMonth">
               <div class="container">
                 <h5 style="font-style: italic; padding-top: 15px; padding-left: 5px;">{{revenueObj.revenueMonth}}</h5>
               </div>
