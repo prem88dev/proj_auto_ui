@@ -12,7 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 export class ProjectRevenueComponent implements OnInit {
 
   private empObj = [];
-  private empBaseDtls = "";
+  private empBaseDtl = "";
   private empLeave = "";
   private locHoliday = "";
   private empSplWrk = "";
@@ -22,7 +22,8 @@ export class ProjectRevenueComponent implements OnInit {
   private sowStart = "";
   private sowStop = "";
   private sowForesee = "";
-  private stopWithoutForesee = false;
+  private totalRevenue = 0;
+  private totalCmiRevenue = 0;
   private dataReceived: Boolean = false;
   private currentYear = new Date().getFullYear();
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -42,7 +43,7 @@ export class ProjectRevenueComponent implements OnInit {
     this.projectService.projectRevenue(esaId, revenueYear).pipe(takeUntil(this.destroy$)).subscribe((data: any[]) => {
       console.log(data);
       this.empObj = data[0];
-      this.empBaseDtls = this.empObj[0];
+      this.empBaseDtl = this.empObj[0];
       this.empLeave = this.empObj[1].leaves;
       this.locHoliday = this.empObj[2].publicHolidays;
       this.empSplWrk = this.empObj[3].specialWorkDays.empSplWrk;
@@ -50,24 +51,25 @@ export class ProjectRevenueComponent implements OnInit {
       this.buffer = this.empObj[4].buffers;
       this.revenue = this.empObj[5].revenue;
 
-      let sowDate = this.empBaseDtls["sowStart"];
+      let sowDate = this.empBaseDtl["sowStart"];
       let splitStr = sowDate.split("-");
       this.sowStart = splitStr[1] + "-" + splitStr[2];
 
-      sowDate = this.empBaseDtls["sowStop"];
+      sowDate = this.empBaseDtl["sowStop"];
       splitStr = sowDate.split("-");
       this.sowStop = splitStr[1] + "-" + splitStr[2];
 
-      sowDate = this.empBaseDtls["foreseenSowStop"];
+      sowDate = this.empBaseDtl["foreseenSowStop"];
       if (sowDate.length > 0) {
         splitStr = sowDate.split("-");
         this.sowForesee = splitStr[1] + "-" + splitStr[2];
       }
+      this.dataReceived = true;
 
-      if (this.sowStop.length > 0 && this.sowForesee.length === 0) {
-        this.stopWithoutForesee = true;
-      }
-
+      this.revenue.forEach((revenueObj) => {
+        this.totalRevenue += revenueObj.revenueAmount;
+        this.totalCmiRevenue += revenueObj.cmiRevenueAmount;
+      });
       this.dataReceived = true;
     });
   }
