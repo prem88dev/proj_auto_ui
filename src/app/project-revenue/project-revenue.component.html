@@ -41,9 +41,9 @@
             <tbody>
               <tr style="font-style: italic; font-size: large;">
                 <td style="text-align: right;">Working hours&thinsp;:&nbsp;&nbsp;</td>
-                <td style="font-weight: bold; padding-right: 10px;">{{empBaseDtl.wrkHrPerDay}}</td>
+                <td class="amountData">{{empBaseDtl.wrkHrPerDay}}</td>
                 <td style="text-align: right; padding-left: 30px;">Billing rate&thinsp;:</td>
-                <ng-container *ngIf="empBaseDtl.currency == 'USD'; then showDollar; else rupeeCheck"></ng-container>
+                <ng-container *ngIf="empBaseDtl.currency == 'USD'; then billRateDollar; else rupeeCheck"></ng-container>
                 <td style="text-align: right; padding-left: 30px;">Location&thinsp;:&nbsp;&nbsp;</td>
                 <td style="font-weight: bold;">{{empBaseDtl.cityName}}&ensp;</td>
                 <td>(&thinsp;{{empBaseDtl.siteInd}}&thinsp;)</td>
@@ -182,16 +182,16 @@
             </td>
           </ng-template>
           <ng-template #monthRevenueDollar>
-            <td style="font-weight: bold; padding-right: 10px;">&ensp;{{revenueObj.revenueAmount/100 | currency: '$'}}</td>
+            <td class="amountData">&ensp;{{revenueObj.revenueAmount/100 | currency: '$'}}</td>
           </ng-template>
           <ng-template #monthCmiDollar>
-            <td style="font-weight: bold; padding-right: 10px;">&ensp;{{revenueObj.cmiRevenueAmount/100 | currency: '$'}}</td>
+            <td class="amountData">&ensp;{{revenueObj.cmiRevenueAmount/100 | currency: '$'}}</td>
           </ng-template>
           <ng-template #monthRevenueRupee>
-            <td style="font-weight: bold; padding-right: 10px;">&ensp;{{revenueObj.revenueAmount/100 | currency: '&#8377;'}}</td>
+            <td class="amountData">&ensp;{{revenueObj.revenueAmount/100 | currency: '&#8377;'}}</td>
           </ng-template>
           <ng-template #monthCmiRupee>
-            <td style="font-weight: bold; padding-right: 10px;">&ensp;{{revenueObj.cmiRevenueAmount/100 | currency: '&#8377;'}}</td>
+            <td class="amountData">&ensp;{{revenueObj.cmiRevenueAmount/100 | currency: '&#8377;'}}</td>
           </ng-template>
         </ng-container>
       </tr>
@@ -303,65 +303,67 @@
             </td>
           </ng-template>
           <ng-template #monthRevenueDollar>
-            <td style="font-weight: bold; padding-right: 10px;">&ensp;{{revenueObj.revenueAmount/100 | currency: '$'}}</td>
+            <td class="amountData">&ensp;{{revenueObj.revenueAmount/100 | currency: '$'}}</td>
           </ng-template>
-          <ng-template #monthCmiDollar>
-            <td style="font-weight: bold; padding-right: 10px;">&ensp;{{revenueObj.cmiRevenueAmount/100 | currency: '$'}}</td>
+          <ng-template #monthRevenueRupeeCheck>
+            <ng-container *ngIf="empBaseDtl.currency == 'INR'; then monthRevenueRupee; else noCurrencyMonthRevenue"></ng-container>
           </ng-template>
           <ng-template #monthRevenueRupee>
-            <td style="font-weight: bold; padding-right: 10px;">&ensp;{{revenueObj.revenueAmount/100 | currency: '&#8377;'}}</td>
+            <td class="amountData">&ensp;{{revenueObj.revenueAmount/100 | currency: '&#8377;'}}</td>
+          </ng-template>
+          <ng-template #noCurrencyMonthRevenue>
+            <td class="amountData">&ensp;{{revenueObj.revenueAmount/100}}</td>
+          </ng-template>
+          <ng-template #monthCmiDollar>
+            <td class="amountData">&ensp;{{revenueObj.cmiRevenueAmount/100 | currency: '$'}}</td>
+          </ng-template>
+          <ng-template #monthCmiRupeeCheck>
+            <ng-container *ngIf="empBaseDtl.currency == 'INR'; then monthCmiRupee; else noCurrencyMonthCmi"></ng-container>
           </ng-template>
           <ng-template #monthCmiRupee>
-            <td style="font-weight: bold; padding-right: 10px;">&ensp;{{revenueObj.cmiRevenueAmount/100 | currency: '&#8377;'}}</td>
+            <td class="amountData">&ensp;{{revenueObj.cmiRevenueAmount/100 | currency: '&#8377;'}}</td>
+          </ng-template>
+          <ng-template #noCurrencyMonthCmi>
+            <td class="amountData">&ensp;{{revenueObj.cmiRevenueAmount/100}}</td>
           </ng-template>
         </ng-container>
       </tr>
     </div>
   </div>
 </ng-template>
-<ng-template #showDollar>
-  <td style="font-weight: bold; padding-right: 10px;">
-    &nbsp;&nbsp;{{empBaseDtl.billRatePerHr/100 | currency: $}}</td>
+<ng-template #billRateDollar>
+  <td class="amountData">&nbsp;&nbsp;{{empBaseDtl.billRatePerHr/100 | currency: $}}</td>
 </ng-template>
 <ng-template #rupeeCheck>
-  <ng-container *ngIf="empBaseDtl.currency == 'INR'; then showRupee; else noCurrency"></ng-container>
+  <ng-container *ngIf="empBaseDtl.currency == 'INR'; then billRateRupee; else noCurrencyBillRate"></ng-container>
 </ng-template>
-<ng-template #showRupee>
-  <td style="font-weight: bold; padding-right: 10px;">
-    &nbsp;&nbsp;{{empBaseDtl.billRatePerHr/100 | currency: '&#8377;'}}
-  </td>
+<ng-template #billRateRupee>
+  <td class="amountData">&nbsp;&nbsp;{{empBaseDtl.billRatePerHr/100 | currency: '&#8377;'}}</td>
 </ng-template>
-<ng-template #noCurrency>
-  <td style="font-weight: bold; padding-right: 10px;">{{empBaseDtl.billRatePerHr/100}}</td>
+<ng-template #noCurrencyBillRate>
+  <td class="amountData">{{empBaseDtl.billRatePerHr/100}}</td>
 </ng-template>
 <ng-template #totalRevenueDollar>
-  <td style="font-weight: bold; padding-right: 10px;">&ensp;{{totalRevenue/100 | currency: $}}
-  </td>
+  <td class="amountData">&ensp;{{totalRevenue/100 | currency: $}}</td>
 </ng-template>
 <ng-template #totalRevenueRupeeCheck>
-  <ng-container *ngIf="empBaseDtl.currency == 'INR'; then totalRupeeRevenue; else noCurrencyTotalRevenue">
-  </ng-container>
+  <ng-container *ngIf="empBaseDtl.currency == 'INR'; then totalRupeeRevenue; else noCurrencyBillRateTotalRevenue"></ng-container>
 </ng-template>
 <ng-template #totalRupeeRevenue>
-  <td style="font-weight: bold; padding-right: 10px;">
-    &ensp;{{totalRevenue/100 | currency: '&#8377;'}}
-  </td>
+  <td class="amountData">&ensp;{{totalRevenue/100 | currency: '&#8377;'}}</td>
 </ng-template>
-<ng-template #noCurrencyTotalRevenue>
-  <td style="font-weight: bold; padding-right: 10px;">{{totalRevenue/100}}</td>
+<ng-template #noCurrencyBillRateTotalRevenue>
+  <td class="amountData">{{totalRevenue/100}}</td>
 </ng-template>
 <ng-template #totalCmiDollar>
-  <td style="font-weight: bold; padding-right: 10px;">&ensp;{{totalCmiRevenue/100 | currency: '$'}}</td>
+  <td class="amountData">&ensp;{{totalCmiRevenue/100 | currency: '$'}}</td>
 </ng-template>
 <ng-template #totalCmiRupeeCheck>
-  <ng-container *ngIf="empBaseDtl.currency == 'INR'; then totalRupeeCmi; else noCurrencyTotalCmi">
-  </ng-container>
+  <ng-container *ngIf="empBaseDtl.currency == 'INR'; then totalRupeeCmi; else noCurrencyBillRateTotalCmi"></ng-container>
 </ng-template>
 <ng-template #totalRupeeCmi>
-  <td style="font-weight: bold; padding-right: 10px;">
-    &ensp;{{totalCmiRevenue/100 | currency: '&#8377;'}}
-  </td>
+  <td class="amountData">&ensp;{{totalCmiRevenue/100 | currency: '&#8377;'}}</td>
 </ng-template>
-<ng-template #noCurrencyTotalCmi>
-  <td style="font-weight: bold; padding-right: 10px;">{{totalCmiRevenue/100}}</td>
+<ng-template #noCurrencyBillRateTotalCmi>
+  <td class="amountData">{{totalCmiRevenue/100}}</td>
 </ng-template>

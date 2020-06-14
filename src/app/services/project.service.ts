@@ -24,14 +24,14 @@ export class ProjectService {
   }
 
   public projectList() {
-    const listProjUrl = "http://localhost:5454/projectList";
-    return this.httpClient.get(listProjUrl).pipe(catchError(this.handleError));
+    const listProjectUrl = "http://localhost:5454/projectList";
+    return this.httpClient.get(listProjectUrl).pipe(catchError(this.handleError));
   }
 
   public projectRevenue(esaId: string, revenueYear: string) {
-    const getProjRevUrl = "http://localhost:5454/projectRevenue?esaId=" + esaId + "&revenueYear=" + revenueYear;
-    console.log(getProjRevUrl);
-    return this.httpClient.get(getProjRevUrl).pipe(catchError(this.handleError));
+    const projectRevenueUrl = "http://localhost:5454/projectRevenue?esaId=" + esaId + "&revenueYear=" + revenueYear;
+    console.log(projectRevenueUrl);
+    return this.httpClient.get(projectRevenueUrl).pipe(catchError(this.handleError));
   }
 
   

@@ -12,6 +12,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 const paths: Routes = [
   { path: 'dashboard/:year', component: DashboardComponent },
   { path: 'projectRevenue/:esaId/:year', component: ProjectRevenueComponent },
+  { path: 'projectRevenue/:esaId', component: ProjectRevenueComponent },
+  { path: 'projectRevenue', component: ProjectRevenueComponent },
   { path: 'projectList', component: ListAllProjectComponent },
   { path: 'addProject', component: AddProjectComponent },
   { path: 'editProject/:id', component: EditProjectComponent },
