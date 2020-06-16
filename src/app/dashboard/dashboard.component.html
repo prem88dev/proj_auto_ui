@@ -8,9 +8,9 @@
         <th style="font-style: italic; text-align: center; vertical-align: middle;" *ngFor=" let colName of columns;">{{colName}}</th>
       </thead>
       <tbody *ngFor="let project of dashboard; last as isLast">
-        <ng-container *ngIf="isLast; then grandTotal; else projectRevenue"></ng-container>
-        <ng-template #projectRevenue>
-          <tr class="projectRevenue" [routerLink]="['/projectRevenue/', project.esaId, this.currentYear]">
+        <ng-container *ngIf="isLast; then grandTotal; else employeeRevenue"></ng-container>
+        <ng-template #employeeRevenue>
+          <tr class="employeeRevenue" [routerLink]="['/employeeRevenue/', project.esaId, this.currentYear]">
             <td style="text-align: left; font-style: italic; font-weight: bold;">{{project.esaId}}</td>
             <td style="text-align: right;" *ngFor="let revenue of project.revenue">{{(revenue.revenueAmount/100) | currency:"$"}}
             </td>

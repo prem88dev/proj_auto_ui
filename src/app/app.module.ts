@@ -6,14 +6,14 @@ import { ListAllProjectComponent } from './list-all-project/list-all-project.com
 import { HttpClientModule } from '@angular/common/http';
 import { EditProjectComponent } from './edit-project/edit-project.component';
 import { AddProjectComponent } from './add-project/add-project.component';
-import { ProjectRevenueComponent } from './project-revenue/project-revenue.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { EmployeeRevenueComponent } from './employee-revenue/employee-revenue.component';
 
 const paths: Routes = [
   { path: 'dashboard/:year', component: DashboardComponent },
-  { path: 'projectRevenue/:esaId/:year', component: ProjectRevenueComponent },
-  { path: 'projectRevenue/:esaId', component: ProjectRevenueComponent },
-  { path: 'projectRevenue', component: ProjectRevenueComponent },
+  { path: 'employeeRevenue/:esaId/:year', component: EmployeeRevenueComponent },
+  { path: 'employeeRevenue/:esaId', component: EmployeeRevenueComponent },
+  { path: 'employeeRevenue', component: EmployeeRevenueComponent },
   { path: 'projectList', component: ListAllProjectComponent },
   { path: 'addProject', component: AddProjectComponent },
   { path: 'editProject/:id', component: EditProjectComponent },
@@ -25,7 +25,7 @@ const paths: Routes = [
     ListAllProjectComponent,
     EditProjectComponent,
     AddProjectComponent,
-    ProjectRevenueComponent,
+    EmployeeRevenueComponent,
     DashboardComponent
   ],
   imports: [

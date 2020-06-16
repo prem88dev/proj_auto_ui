@@ -8,7 +8,7 @@
             <th *ngFor="let colName of columns">{{colName}}</th>
          </thead>
          <tbody>
-            <tr *ngFor="let project of projects" [routerLink]="['/projectRevenue/', project._id, this.currentYear]">
+            <tr *ngFor="let project of projects" [routerLink]="['/employeeRevenue/', project._id, this.currentYear]">
                <td style="text-align: center; font-style: italic; font-weight: bold;">{{project._id}}</td>
                <td style="font-style: italic;">
                   <ol *ngFor="let description of project.description">{{description.name}}</ol>
