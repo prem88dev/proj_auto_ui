@@ -14,7 +14,8 @@ export class DashboardComponent implements OnInit {
   private dashboard = [];
   private columns = [];
   private dataReceived: Boolean = false;
-  private currentYear = new Date().getFullYear().toString();
+  private revenueYear = "";
+  private currentYear = new Date().getFullYear();
 
   destroy$: Subject<Boolean> = new Subject<Boolean>();
 
@@ -24,27 +25,29 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    let yearParam = this.route.snapshot.paramMap.get('year');
-    if (yearParam !== null && yearParam !== "") {
-      this.currentYear = yearParam;
+    let yearParam = this.route.snapshot.paramMap.get('revenueYear');
+    if (yearParam !== null && yearParam !== "" && yearParam !== undefined) {
+      this.revenueYear = yearParam;
+    } else {
+      this.revenueYear = this.currentYear.toString();
     }
     this.columns = [
       "Project ID",
-      "Jan-" + this.currentYear,
-      "Feb-" + this.currentYear,
-      "Mar-" + this.currentYear,
-      "Apr-" + this.currentYear,
-      "May-" + this.currentYear,
-      "Jun-" + this.currentYear,
-      "Jul-" + this.currentYear,
-      "Aug-" + this.currentYear,
-      "Sep-" + this.currentYear,
-      "Oct-" + this.currentYear,
-      "Nov-" + this.currentYear,
-      "Dec-" + this.currentYear,
+      "Jan-" + this.revenueYear,
+      "Feb-" + this.revenueYear,
+      "Mar-" + this.revenueYear,
+      "Apr-" + this.revenueYear,
+      "May-" + this.revenueYear,
+      "Jun-" + this.revenueYear,
+      "Jul-" + this.revenueYear,
+      "Aug-" + this.revenueYear,
+      "Sep-" + this.revenueYear,
+      "Oct-" + this.revenueYear,
+      "Nov-" + this.revenueYear,
+      "Dec-" + this.revenueYear,
     ];
 
-    this.dashboardService.dashboard(this.currentYear).pipe(takeUntil(this.destroy$)).subscribe((data: any[]) => {
+    this.dashboardService.dashboard(this.revenueYear).pipe(takeUntil(this.destroy$)).subscribe((data: any[]) => {
       console.log(data);
       this.dataReceived = true
       this.dashboard = data;

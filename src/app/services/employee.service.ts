@@ -23,17 +23,25 @@ export class EmployeeService {
     return throwError(errorMessage);
   }
 
-  public employeeList(esaId: string, esaSubType?: string) {
-    let esaSubTypeBuff = "";
-    if (esaSubType === undefined || esaSubType === null) {
-      esaSubTypeBuff = "";
+  public employeeList(esaId: string, revenueYear: string) {
+    if (esaId === undefined || esaId === null || esaId === "") {
+      alert("ESA ID not provided");
+    } else if (revenueYear === undefined || revenueYear === null || revenueYear === "") {
+      alert("Revenue year not provided");
+    } else {
+      const employeeListUrl = "http://localhost:5454/workforce?esaId=" + esaId + "&revenueYear=" + revenueYear;
+      return this.httpClient.get(employeeListUrl).pipe(catchError(this.handleError));
     }
-    const employeeListUrl = "http://localhost:5454/workforce?esaId=" + esaId + "&esaSubType=" + esaSubTypeBuff;
-    return this.httpClient.get(employeeListUrl).pipe(catchError(this.handleError));
   }
 
-  public employeeRevenue(filter: string) {
-    const employeeRevenueUrl = "http://localhost:5454/employeeRevenue?filter=" + filter;
-    return this.httpClient.get(employeeRevenueUrl).pipe(catchError(this.handleError));
+  public employeeRevenue(revenueYear: string, employeeFilter: string) {
+    if (revenueYear === undefined || revenueYear === null || revenueYear === "") {
+      alert("Revenue year not provided");
+    } else if (employeeFilter === undefined || employeeFilter === null || employeeFilter === "") {
+      alert("Employee filter is not provided");
+    } else {
+      const employeeRevenueUrl = "http://localhost:5454/employeeRevenue?revenueYear=" + revenueYear + "&employeeFilter=" + employeeFilter;
+      return this.httpClient.get(employeeRevenueUrl).pipe(catchError(this.handleError));
+    }
   }
 }

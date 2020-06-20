@@ -1,4 +1,4 @@
-<ng-container *ngIf="dataReceived==true; then showDashboard;"></ng-container>
+<ng-container *ngIf="dataReceived == true; then showDashboard;"></ng-container>
 <ng-template #showDashboard>
   <p></p>
   <p style="font-style: italic;">&emsp;Click on each row to view employee-wise revenue</p>
@@ -10,7 +10,7 @@
       <tbody *ngFor="let project of dashboard; last as isLast">
         <ng-container *ngIf="isLast; then grandTotal; else employeeRevenue"></ng-container>
         <ng-template #employeeRevenue>
-          <tr class="employeeRevenue" [routerLink]="['/employeeRevenue/', project.esaId, this.currentYear]">
+          <tr class="employeeRevenue" [routerLink]="['/employeeRevenue/', this.revenueYear, project.esaId]">
             <td style="text-align: left; font-style: italic; font-weight: bold;">{{project.esaId}}</td>
             <td style="text-align: right;" *ngFor="let revenue of project.revenue">{{(revenue.revenueAmount/100) | currency:"$"}}
             </td>
