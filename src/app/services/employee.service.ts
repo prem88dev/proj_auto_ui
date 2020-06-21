@@ -44,4 +44,13 @@ export class EmployeeService {
       return this.httpClient.get(employeeRevenueUrl).pipe(catchError(this.handleError));
     }
   }
+
+  public getMinMaxAllocYear(esaId: string) {
+    if (esaId === undefined || esaId === null || esaId === "") {
+      alert("ESA ID not provided");
+    } else {
+      const getMinMaxYearUrl = "http://localhost:5454/minMaxAllocYear?esaId=" + esaId;
+      return this.httpClient.get(getMinMaxYearUrl).pipe(catchError(this.handleError));
+    }
+  }
 }

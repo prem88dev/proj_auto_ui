@@ -1,10 +1,9 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EmployeeService } from '../services/employee.service';
-import { MediaMatcher } from '@angular/cdk/layout';
-import { throwMatDialogContentAlreadyAttachedError } from '@angular/material';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-project-revenue',
@@ -13,41 +12,34 @@ import { throwMatDialogContentAlreadyAttachedError } from '@angular/material';
 })
 export class EmployeeRevenueComponent implements OnInit {
 
-  mobileQuery: MediaQueryList;
-  private _mobileQueryListener: () => void;
-
   private empList = [];
   private empObj = [];
-  private empBaseDtl = "";
-  private empLeave = "";
-  private locHoliday = "";
-  private empSplWrk = "";
-  private locSplWrk = "";
-  private buffer = "";
+  private empBaseDtl: string = "";
+  private empLeave: string = "";
+  private locHoliday: string = "";
+  private empSplWrk: string = "";
+  private locSplWrk: string = "";
+  private buffer: string = "";
   private revenue = [];
-  private sowStart = "";
-  private sowStop = "";
-  private sowForesee = "";
-  private totalRevenue = 0;
-  private totalCmiRevenue = 0;
+  private sowStart: string = "";
+  private sowStop: string = "";
+  private sowForeCast: string = "";
+  private totalRevenue: number = 0;
+  private totalCmiRevenue: number = 0;
   private dataReceived: Boolean = false;
   private currentYear = new Date().getFullYear();
-  private esaId = "";
-  private revenueYear = "";
+  private esaId: string = "";
+  private revenueYear: string = "";
+  private minMaxYear = [];
+  private selectedYear: number = 0;
 
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     private employeeService: EmployeeService,
     private route: ActivatedRoute,
-    private router: Router,
-    private media: MediaMatcher,
-    private changeDetectorRef: ChangeDetectorRef
-  ) {
-    this.mobileQuery = media.matchMedia('(max-width: 600px)');
-    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
-    this.mobileQuery.addListener(this._mobileQueryListener);
-  }
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.esaId = this.route.snapshot.paramMap.get('esaId');
@@ -60,12 +52,32 @@ export class EmployeeRevenueComponent implements OnInit {
       this.revenueYear = this.currentYear.toString();
       this.router.navigate(['/employeeRevenue', this.esaId, this.revenueYear]);
     } else {
-      this.employeeService.employeeList(this.esaId, this.revenueYear).pipe(takeUntil(this.destroy$)).subscribe((data: any[]) => {
-        console.log(data);
-        if (data.length >= 1) {
-          this.empList = data;
-          let employeeFilter = this.empList[0]._id;
-          this.getEmployeeRevenue(this.revenueYear, employeeFilter);
+      this.employeeService.getMinMaxAllocYear(this.esaId).pipe(takeUntil(this.destroy$)).subscribe((projMinMaxYear: any[]) => {
+        let startYear = this.currentYear;
+        let stopYear = this.currentYear;
+        if (projMinMaxYear.length === 1) {
+          startYear = projMinMaxYear[0].minYear;
+          stopYear = projMinMaxYear[0].maxYear;
+        }
+
+        if (startYear < stopYear) {
+          for (let listStart = startYear; listStart <= stopYear; listStart++) {
+            /*this.minMaxYear.push({ "id": listStart, "label": listStart });*/
+            this.minMaxYear.push(listStart);
+          }
+        } else if (startYear === stopYear) {
+          this.minMaxYear.push(startYear);
+        }
+      });
+
+      console.log(this.minMaxYear)
+
+      this.employeeService.employeeList(this.esaId, this.revenueYear).pipe(takeUntil(this.destroy$)).subscribe((projectRevenue: any[]) => {
+        console.log(projectRevenue);
+        if (projectRevenue.length >= 1) {
+          this.empList = projectRevenue;
+          let selectedEmployee = this.empList[0]._id;
+          this.getEmployeeRevenue(this.revenueYear, selectedEmployee);
         } else {
           alert("No employee found for project " + this.esaId);
           this.router.navigate(['/projectList']);
@@ -74,8 +86,8 @@ export class EmployeeRevenueComponent implements OnInit {
     }
   }
 
-  public getEmployeeRevenue(revenueYear: string, employeeFilter: string) {
-    this.employeeService.employeeRevenue(revenueYear, employeeFilter).pipe(takeUntil(this.destroy$)).subscribe((data: any[]) => {
+  public getEmployeeRevenue(revenueYear: string, selectedEmployee: string) {
+    this.employeeService.employeeRevenue(revenueYear, selectedEmployee).pipe(takeUntil(this.destroy$)).subscribe((data: any[]) => {
       console.log(data);
       if (data.length > 1) {
         this.empObj = data;
@@ -88,6 +100,8 @@ export class EmployeeRevenueComponent implements OnInit {
         this.revenue = this.empObj[5].revenue;
         this.totalRevenue = 0;
         this.totalCmiRevenue = 0;
+        this.sowForeCast = "";
+        this.revenueYear = revenueYear;
 
         let sowDate = this.empBaseDtl["sowStart"];
         let splitStr = sowDate.split("-");
@@ -100,9 +114,7 @@ export class EmployeeRevenueComponent implements OnInit {
         sowDate = this.empBaseDtl["foreseenSowStop"];
         if (sowDate.length > 0) {
           splitStr = sowDate.split("-");
-          this.sowForesee = splitStr[1] + "-" + splitStr[2];
-        } else {
-          this.sowForesee = ""
+          this.sowForeCast = splitStr[1] + "-" + splitStr[2];
         }
 
         this.revenue.forEach((revenueObj) => {
@@ -115,6 +127,13 @@ export class EmployeeRevenueComponent implements OnInit {
         this.router.navigate(['/projectList']);
       }
     });
+  }
+
+  public onChange(selectedYear: string, selectedEmployee: string) {
+    console.log(selectedYear);
+    console.log(selectedEmployee);
+    this.getEmployeeRevenue(selectedYear, selectedEmployee);
+    this.dataReceived = false;
   }
 
   ngOnDestroy() {

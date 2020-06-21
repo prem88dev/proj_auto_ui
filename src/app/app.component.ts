@@ -23,4 +23,5 @@ export class AppComponent implements OnInit {
       this.dataReceived = true;
     });
   }
+
 }

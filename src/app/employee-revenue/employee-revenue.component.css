@@ -1,108 +1,184 @@
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 
 .ordMonth {
-   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
-   transition: 0.3s;
-   width: 250px;
-   height: 250px;
-   border-radius: 10px;
-   user-select: none;
- }
+  user-select: none;
+  box-shadow: inset 0 0 2px 2px rgba(100, 85, 85, 0.3);
+  padding: 5px;
+  width: 15.3vw;
+  border-radius: 0.3vw;
+  padding-left: 10px;
+  transition-delay: 0.5s;
+  -webkit-transition-delay: 0.5s;
+}
  
- .soStartMarker {
-   box-shadow: 0 4px 8px 0 rgba(43, 255, 0, 0.6);
-   transition: 0.3s;
-   width: 250px;
-   height: 250px;
-   border-radius: 10px;
-   user-select: none;
- }
- 
- .soStopMarker {
-   box-shadow: 0 4px 8px 0 rgba(234, 0, 255, 0.5);
-   transition: 0.3s;
-   width: 250px;
-   height: 250px;
-   border-radius: 10px;
-   user-select: none;
- }
- 
- .soForeseeMarker {
-   box-shadow: 0 4px 8px 0 rgba(255, 194, 0, 0.6);
-   transition: 0.3s;
-   width: 250px;
-   height: 250px;
-   border-radius: 10px;
-   user-select: none;
- }
- 
- .cardFooter {
-   text-align: right;
-   font-size: small;
-   font-style: italic;
-   padding-right: 15px;
-   user-select: none;
- }
- 
- .ordMonth:hover {
-   box-shadow: 0 8px 16px 0 rgba(0, 0, 255, 1);
-   cursor: pointer;
- }
- 
- .soStartMarker:hover {
-   box-shadow: 0 8px 16px 0 rgba(43, 255, 0, 1);
-   cursor: pointer;
- }
- 
- .soStopMarker:hover {
-   box-shadow: 0 8px 16px 0 rgba(234, 0, 255, 1);
-   cursor: pointer;
- }
- 
- .soForeseeMarker:hover {
-   box-shadow: 0 8px 16px 0 rgba(255, 194, 0, 1);
-   cursor: pointer;
- }
- 
- .ordMonth:active {
-   box-shadow: none;
-   transition: 0.2s;
- }
- 
- .soStartMarker:active {
-   box-shadow: none;
-   transition: 0.2s;
- }
- 
- .soStopMarker:active {
-   box-shadow: none;
-   transition: 0.2s;
- }
- 
- .soForeseeMarker:active {
-   box-shadow: none;
-   transition: 0.2s;
- }
- 
- .container {
-   width: 250px;
-   height: 225px;
- }
- 
- .amountData{
-   font-weight: bold;
-   padding-right: 10px;
- }
+.soStartMarker {
+  user-select: none;
+  box-shadow: inset 0 0 2px 2px rgba(47, 241, 8, 0.5);
+  background: rgb(132, 240, 127);
+  padding: 5px;
+  width: 15.3vw;
+  border-radius: 0.3vw;
+  padding-left: 10px;
+}
 
- .example-container {
+.soStopMarker {
+  user-select: none;
+  box-shadow: inset 0 0 2px 2px rgba(234, 0, 255, 0.5);
+  background: rgb(252, 143, 246);
+  padding: 5px;
+  width: 15.3vw;
+  border-radius: 0.3vw;
+  padding-left: 10px;
+}
+
+.soForeseeMarker {
+  user-select: none;
+  box-shadow: inset 0 0 2px 2px rgba(255, 194, 0, 0.5);
+  background: rgb(228, 216, 55);
+  padding: 5px;
+  width: 15.3vw;
+  border-radius: 0.3vw;
+  padding-left: 10px;
+}
+
+.cardFooter {
+  text-align: right;
+  font-size: 0.8vw;
+  font-style: italic;
+  padding-right: 8px;
+  user-select: none;
+  height: 1.2vw;
+}
+
+.ordMonth:hover {
+  transition: all ease-in-out;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 255, 1);
+  cursor: pointer;
+}
+
+.soStartMarker:hover {
+  transition: all ease-in-out;
+  box-shadow: 0 8px 16px 0 rgb(51, 152, 30);
+  cursor: pointer;
+}
+
+.soStopMarker:hover {
+  transition: all ease-in-out;
+  box-shadow: 0 8px 16px 0 rgba(234, 0, 255, 1);
+  cursor: pointer;
+}
+
+.soForeseeMarker:hover {
+  transition: all ease-in-out;
+  box-shadow: 0 8px 16px 0 rgb(189, 151, 27);
+  cursor: pointer;
+}
+
+.ordMonth:active {
+  box-shadow: none;
+  transition: 0.2s;
+}
+
+.soStartMarker:active {
+  box-shadow: none;
+  transition: 0.2s;
+}
+
+.soStopMarker:active {
+  box-shadow: none;
+  transition: 0.2s;
+}
+
+.soForeseeMarker:active {
+  box-shadow: none;
+  transition: 0.2s;
+}
+
+.container {
+  width: 250px;
+  height: 225px;
+}
+
+.project-name {
+  font-size: 1.5vw;
+  font-style: italic;
+  font-weight: lighter;
+}
+
+.rev-month-hfive {
+  font-style: italic;
+  font-size: 1.3vw;
+  padding-left: 15px;
+  padding-top: 5px;
+}
+
+.amount-data {
+  padding-right: 10px;
+  font-size: 1.1vw;
+}
+
+.employee-name {
+  font-size: 2.3vw;
+}
+
+.employee-id {
+  font-size: 1.7vw;
+}
+
+.esa-id {
+  width: 100%;
+  font-size: 1.6vw;
+  font-weight: lighter;
+  font-style: italic;
+  vertical-align: middle;
+  padding-left: 2vw;
+}
+
+.revenue-container{
+  padding-left: 35px;
+  font-style: italic;
+}
+
+.allocation-detail {
+  font-size: 1.35vw;
+  padding-left: 30px;
+}
+
+.allocation-date {
+  font-weight: bold;
+}
+
+.right-padleft {
+  text-align: right;
+  padding-left: 30px;
+}
+
+.no-data {
+  font-weight: lighter;
+}
+
+.flex-row {
+  flex-direction: row;
+  box-sizing: border-box;
+  display: flex;
+}
+
+.menu-icon {
+  font-size: 2vw;
+}
+
+.employee-detail-container {
   display: flex;
   flex-direction: column;
   position: absolute;
-  top: 80px;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  background-color: black;
+  color: beige;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
 }
+
 
 .example-is-mobile .example-toolbar {
   position: fixed;
@@ -110,7 +186,7 @@
   z-index: 2;
 }
 
-.example-sidenav-container {
+.revenue-sidenav-container {
   /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
      causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
   flex: 1;

@@ -12,14 +12,14 @@
         <ng-template #employeeRevenue>
           <tr class="employeeRevenue" [routerLink]="['/employeeRevenue/', this.revenueYear, project.esaId]">
             <td style="text-align: left; font-style: italic; font-weight: bold;">{{project.esaId}}</td>
-            <td style="text-align: right;" *ngFor="let revenue of project.revenue">{{(revenue.revenueAmount/100) | currency:"$"}}
+            <td style="text-align: right; font-style: italic;" *ngFor="let revenue of project.revenue">{{(revenue.revenueAmount/100) | currency:"$"}}
             </td>
           </tr>
         </ng-template>
         <ng-template #grandTotal>
           <tr class="grandTotal">
             <td style="text-align: left; font-style: italic; font-weight: bold;">{{project.esaId}}</td>
-            <td style="text-align: right; font-weight: bold;" *ngFor="let revenue of project.revenue">{{(revenue.revenueAmount/100) | currency:"$"}}</td>
+            <td style="text-align: right; font-style: italic; font-weight: bold;" *ngFor="let revenue of project.revenue">{{(revenue.revenueAmount/100) | currency:"$"}}</td>
           </tr>
         </ng-template>
       </tbody>
