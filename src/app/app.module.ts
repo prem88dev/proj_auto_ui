@@ -60,6 +60,8 @@ const paths: Routes = [
   { path: 'addProject', component: AddProjectComponent },
   { path: '**', component: DashboardComponent }
 ];
+
+
 @NgModule({
   declarations: [
     AppComponent,
