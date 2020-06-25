@@ -51,10 +51,13 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 
 const paths: Routes = [
-  { path: 'dashboard/:revenueYear', component: DashboardComponent },
+  { path: 'dashboard', component: DashboardComponent },
   { path: 'employeeRevenue/:revenueYear/:esaId', component: EmployeeRevenueComponent },
   { path: 'projectList', component: ListAllProjectComponent },
   { path: 'addProject', component: AddProjectComponent },
@@ -118,9 +121,13 @@ const paths: Routes = [
     MatTooltipModule,
     MatTreeModule,
     PortalModule,
-    ScrollingModule
+    ScrollingModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
-  providers: [],
+  providers: [
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
