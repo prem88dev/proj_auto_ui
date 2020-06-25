@@ -1,14 +1,206 @@
-.employeeRevenue:hover td{
-   background-color: cornflowerblue;
-   cursor: pointer;
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
+.navbar-header {
+  width: 86%;
+  font-weight: lighter;
+  font-style: italic;
+  font-size: 1.6vw;
+  text-align: center;
+  padding-left: 150px;
 }
 
-th {
-   text-align: center;
-   vertical-align: middle;
+.ordMonth {
+  user-select: none;
+  box-shadow: inset 0 0 2px 2px rgba(100, 85, 85, 0.3);
+  padding: 5px;
+  width: 15.3vw;
+  border-radius: 0.3vw;
+  padding-left: 10px;
+  transition-delay: 0.5s;
+  -webkit-transition-delay: 0.5s;
+}
+ 
+.soStartMarker {
+  user-select: none;
+  background: rgb(151, 245, 146);
+  padding: 5px;
+  width: 15.3vw;
+  border-radius: 0.3vw;
+  padding-left: 10px;
 }
 
-td {
-   text-align: left;
-   vertical-align: middle;
+.soStopMarker {
+  user-select: none;
+  background: rgb(255, 121, 121);
+  padding: 5px;
+  width: 15.3vw;
+  border-radius: 0.3vw;
+  padding-left: 10px;
+}
+
+.soForeseeMarker {
+  user-select: none;
+  background: rgb(255, 246, 125);
+  padding: 5px;
+  width: 15.3vw;
+  border-radius: 0.3vw;
+  padding-left: 10px;
+}
+
+.cardFooter {
+  text-align: right;
+  font-size: 0.8vw;
+  font-style: italic;
+  padding-right: 8px;
+  user-select: none;
+  height: 1.2vw;
+}
+
+.ordMonth:hover {
+  transition: all ease-in-out;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 255, 1);
+  cursor: pointer;
+}
+
+.soStartMarker:hover {
+  transition: all ease-in-out;
+  box-shadow: 0 8px 16px 0 rgb(51, 152, 30);
+  cursor: pointer;
+}
+
+.soStopMarker:hover {
+  transition: all ease-in-out;
+  box-shadow: 0 8px 16px 0 rgb(221, 38, 38);
+  cursor: pointer;
+}
+
+.soForeseeMarker:hover {
+  transition: all ease-in-out;
+  box-shadow: 0 8px 16px 0 rgb(225, 185, 9);
+  cursor: pointer;
+}
+
+.ordMonth:active {
+  box-shadow: none;
+  transition: 0.2s;
+}
+
+.soStartMarker:active {
+  box-shadow: none;
+  transition: 0.2s;
+}
+
+.soStopMarker:active {
+  box-shadow: none;
+  transition: 0.2s;
+}
+
+.soForeseeMarker:active {
+  box-shadow: none;
+  transition: 0.2s;
+}
+
+.container {
+  width: 250px;
+  height: 225px;
+}
+
+.project-name {
+  font-size: 1.5vw;
+  font-style: italic;
+  font-weight: lighter;
+}
+
+.rev-month-hfive {
+  font-style: italic;
+  font-size: 1.3vw;
+  padding-left: 15px;
+  padding-top: 5px;
+}
+
+.amount-data {
+  padding-right: 10px;
+  font-size: 1.3vw;
+}
+
+.employee-name {
+  font-size: 2.3vw;
+}
+
+.employee-id {
+  font-size: 1.7vw;
+}
+
+.esa-id {
+  width: 100%;
+  font-size: 1.6vw;
+  font-weight: lighter;
+  font-style: italic;
+  vertical-align: middle;
+  padding-left: 2vw;
+}
+
+.revenue-container {
+  padding-left: 35px;
+  font-style: italic;
+  padding-bottom: 30px;
+}
+
+.allocation-detail {
+  font-size: 1.35vw;
+  padding-left: 30px;
+}
+
+.allocation-date {
+  font-weight: bold;
+}
+
+.right-padleft {
+  text-align: right;
+  padding-left: 30px;
+}
+
+.no-data {
+  font-weight: lighter;
+}
+
+.flex-row {
+  flex-direction: row;
+  box-sizing: border-box;
+  display: flex;
+}
+
+.menu-icon {
+  font-size: 2vw;
+}
+
+.employee-detail-container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background-color: black;
+  color: beige;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+}
+
+.revenue-sidenav-container {
+  /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
+     causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
+  flex: 1;
+}
+
+.revenue-amount {
+  text-align: right;
+  text-shadow: 0.5px 0.5px 0.5px pink;
+  font-weight: lighter;
+}
+
+.cmi-revenue-amount {
+  font-size: 2.2vw;
+  text-shadow: 1px 1px 1px yellowgreen;
+  font-weight: lighter;
+  padding-left: 10px;
 }
