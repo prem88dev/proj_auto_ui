@@ -7,7 +7,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { EditProjectComponent } from './edit-project/edit-project.component';
 import { AddProjectComponent } from './add-project/add-project.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { EmployeeRevenueComponent } from './employee-revenue/employee-revenue.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatFormFieldModule } from '@angular/material';
 import { A11yModule } from '@angular/cdk/a11y';
@@ -58,7 +57,6 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 const paths: Routes = [
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'employeeRevenue/:revenueYear/:esaId', component: EmployeeRevenueComponent },
   { path: 'projectList', component: ListAllProjectComponent },
   { path: 'addProject', component: AddProjectComponent },
   { path: '**', component: DashboardComponent }
@@ -71,7 +69,6 @@ const paths: Routes = [
     ListAllProjectComponent,
     EditProjectComponent,
     AddProjectComponent,
-    EmployeeRevenueComponent,
     DashboardComponent
   ],
   imports: [
