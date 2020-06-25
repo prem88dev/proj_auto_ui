@@ -23,7 +23,12 @@ export class EmployeeService {
     return throwError(errorMessage);
   }
 
-  public employeeList(esaId: string, revenueYear: string) {
+  public allEmployees() {
+    const allEmpListUrl = "http://localhost:5454/workforce";
+    return this.httpClient.get(allEmpListUrl).pipe(catchError(this.handleError));
+  }
+
+  public projectEmployees(esaId: string, revenueYear: string) {
     if (esaId === undefined || esaId === null || esaId === "") {
       alert("ESA ID not provided");
     } else if (revenueYear === undefined || revenueYear === null || revenueYear === "") {
@@ -47,7 +52,8 @@ export class EmployeeService {
 
   public getMinMaxAllocYear(esaId: string) {
     if (esaId === undefined || esaId === null || esaId === "") {
-      alert("ESA ID not provided");
+      const getAllProjMinMaxYearUrl = "http://localhost:5454/minMaxAllocYear";
+      return this.httpClient.get(getAllProjMinMaxYearUrl).pipe(catchError(this.handleError));
     } else {
       const getMinMaxYearUrl = "http://localhost:5454/minMaxAllocYear?esaId=" + esaId;
       return this.httpClient.get(getMinMaxYearUrl).pipe(catchError(this.handleError));
