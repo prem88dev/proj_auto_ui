@@ -1,5 +1,5 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=block" rel="stylesheet">
-<ng-container *ngIf="dashboardDetail == true; then showDashboardRevenue; else employeeDetailCheck"></ng-container>
+<ng-container *ngIf="dashboardDetail == true; then showDashboardRevenue; else showEmployeeRevenue"></ng-container>
 <ng-template #showDashboardRevenue>
   <div class="employee-detail-container">
     <div style="float: left; width: 100%; padding-top: 10px; padding-bottom: 10px;">
@@ -22,7 +22,7 @@
       <mat-sidenav #snav [mode]="'over'" fixedTopGap="80">
         <mat-nav-list style="font-style: italic;">
           <mat-accordion>
-            <mat-expansion-panel *ngFor="let projEmpObj of allProjEmpList">
+            <mat-expansion-panel *ngFor="let projEmpObj of projectWorkforce">
               <mat-expansion-panel-header class="right-aligned-header">
                 <mat-panel-title style="font-size: 1vw;">{{projEmpObj[0].esaDesc}}</mat-panel-title>
                 <mat-panel-description style="font-size: 1vw;">(&thinsp;{{projEmpObj[0]._id}}&thinsp;)
@@ -36,16 +36,440 @@
         </mat-nav-list>
       </mat-sidenav>
       <div class="mat-app-background basic-container" style="font-style: italic;">
-        <mat-tab-group mat-align-tabs="center">
-          <mat-tab *ngFor="let projEmpObj of allProjEmpList" label="{{projEmpObj[0].esaDesc}}">{{projEmpObj[0]._id}}
+        <mat-tab-group mat-align-tabs="center" (selectedTabChange)="getDashboardRevenue($event)">
+          <mat-tab style="height: 100px" label="{{projEmpObj[0].esaDesc}}" *ngFor="let projEmpObj of projectWorkforce">
+            <br>
+            <div style="float: left; width: 100%;">Click on each month to view detailed summary</div>
+            <p></p>
+            <ng-template matTabContent>
+              <div class="flex-row" fxlayout="row"
+                style="width: 98%; padding-top: 10px; padding-left: 20px; padding-bottom: 50px;">
+                <ng-container *ngFor="let revenueObj of dashboardRevenue; let revObjIdx = index;">
+                  <ng-container *ngIf="revObjIdx == 0; then janflex; else febcheck"></ng-container>
+                  <ng-template #janflex>
+                    <div fxflex="" fxflexorder="-1" style="flex: 1 1 0%; box-sizing: border-box;">
+                      <ng-container *ngIf="sowStart == revenueObj.revenueMonth; then dispStart; else checkStop">
+                      </ng-container>
+                    </div>
+                  </ng-template>
+                  <ng-template #febcheck>
+                    <ng-container *ngIf="revObjIdx == 1; then febflex; else marcheck"></ng-container>
+                  </ng-template>
+                  <ng-template #febflex>
+                    <div fxflex="" fxflexorder="1" style="flex: 1 1 0%; box-sizing: border-box;">
+                      <ng-container *ngIf="sowStart == revenueObj.revenueMonth; then dispStart; else checkStop">
+                      </ng-container>
+                    </div>
+                  </ng-template>
+                  <ng-template #marcheck>
+                    <ng-container *ngIf="revObjIdx == 2; then marflex; else aprcheck"></ng-container>
+                  </ng-template>
+                  <ng-template #marflex>
+                    <div fxflex="" fxflexorder="2" style="flex: 1 1 0%; box-sizing: border-box;">
+                      <ng-container *ngIf="sowStart == revenueObj.revenueMonth; then dispStart; else checkStop">
+                      </ng-container>
+                    </div>
+                  </ng-template>
+                  <ng-template #aprcheck>
+                    <ng-container *ngIf="revObjIdx == 3; then aprflex; else maycheck"></ng-container>
+                  </ng-template>
+                  <ng-template #aprflex>
+                    <div fxflex="" fxflexorder="3" style="flex: 1 1 0%; box-sizing: border-box;">
+                      <ng-container *ngIf="sowStart == revenueObj.revenueMonth; then dispStart; else checkStop">
+                      </ng-container>
+                    </div>
+                  </ng-template>
+                  <ng-template #maycheck>
+                    <ng-container *ngIf="revObjIdx == 4; then mayflex; else juncheck"></ng-container>
+                  </ng-template>
+                  <ng-template #mayflex>
+                    <div fxflex="" fxflexorder="4" style="flex: 1 1 0%; box-sizing: border-box;">
+                      <ng-container *ngIf="sowStart == revenueObj.revenueMonth; then dispStart; else checkStop">
+                      </ng-container>
+                    </div>
+                  </ng-template>
+                  <ng-template #juncheck>
+                    <ng-container *ngIf="revObjIdx == 5; then junflex;"></ng-container>
+                  </ng-template>
+                  <ng-template #junflex>
+                    <div fxflex="" fxflexorder="5" style="flex: 1 1 0%; box-sizing: border-box;">
+                      <ng-container *ngIf="sowStart == revenueObj.revenueMonth; then dispStart; else checkStop">
+                      </ng-container>
+                    </div>
+                  </ng-template>
+                  <ng-template #checkStop>
+                    <ng-container *ngIf="sowStop == revenueObj.revenueMonth; then dispStop; else checkForeSee">
+                    </ng-container>
+                  </ng-template>
+                  <ng-template #checkForeSee>
+                    <ng-container *ngIf="sowForeCast == revenueObj.revenueMonth; then dispForeSee; else dispOrd">
+                    </ng-container>
+                  </ng-template>
+                  <ng-template #dispStart>
+                    <div class="soStartMarker" fxflex="" fxflexorder="-1">
+                      <h5 class="rev-month-hfive">{{revenueObj.revenueMonth | date: 'MMMM - yyyy'}}</h5>
+                      <div style="padding-top: 10px; padding-bottom: 20px;">
+                        <tbody>
+                          <tr style="font-style: italic;">
+                            <td style="text-align: right; font-size: 1vw;">Revenue&thinsp;:</td>
+                            <ng-container
+                              *ngIf="empBaseDtl.currency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck">
+                            </ng-container>
+                          </tr>
+                          <tr style="font-style: italic; padding: 30px;">
+                            <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
+                            <ng-container
+                              *ngIf="empBaseDtl.currency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck">
+                            </ng-container>
+                          </tr>
+                        </tbody>
+                      </div>
+                      <div class="cardFooter">Beeline Start</div>
+                    </div>
+                  </ng-template>
+                  <ng-template #dispStop>
+                    <div class="soStopMarker" fxflex="" fxflexorder="-1">
+                      <h5 class="rev-month-hfive">{{revenueObj.revenueMonth | date: 'MMMM - yyyy'}}</h5>
+                      <div style="padding-top: 10px; padding-bottom: 20px;">
+                        <tbody>
+                          <tr style="font-style: italic;">
+                            <td style="text-align: right; font-size: 1vw">Revenue&thinsp;:</td>
+                            <ng-container
+                              *ngIf="empBaseDtl.currency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck">
+                            </ng-container>
+                          </tr>
+                          <tr style="font-style: italic; padding: 30px;">
+                            <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
+                            <ng-container
+                              *ngIf="empBaseDtl.currency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck">
+                            </ng-container>
+                          </tr>
+                        </tbody>
+                      </div>
+                      <div class="cardFooter">Beeline End</div>
+                    </div>
+                  </ng-template>
+                  <ng-template #dispForeSee>
+                    <div class="soForeseeMarker" fxflex="" fxflexorder="-1">
+                      <h5 class="rev-month-hfive">{{revenueObj.revenueMonth | date: 'MMMM - yyyy'}}</h5>
+                      <div style="padding-top: 10px; padding-bottom: 20px;">
+                        <tbody>
+                          <tr style="font-style: italic;">
+                            <td style="text-align: right; font-size: 1vw;">Revenue&thinsp;:</td>
+                            <ng-container
+                              *ngIf="empBaseDtl.currency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck">
+                            </ng-container>
+                          </tr>
+                          <tr style="font-style: italic; padding: 30px;">
+                            <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
+                            <ng-container
+                              *ngIf="empBaseDtl.currency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck">
+                            </ng-container>
+                          </tr>
+                        </tbody>
+                      </div>
+                      <div class="cardFooter">Forecasted Beeline End</div>
+                    </div>
+                  </ng-template>
+                  <ng-template #dispOrd>
+                    <div class="ordMonth" fxflex="" fxflexorder="-1">
+                      <h5 class="rev-month-hfive">{{revenueObj.revenueMonth | date: 'MMMM - yyyy'}}</h5>
+                      <div style="padding-top: 10px; padding-bottom: 20px;">
+                        <tbody>
+                          <tr style="font-style: italic;">
+                            <td style="text-align: right; font-size: 1vw;">Revenue&thinsp;:</td>
+                            <ng-container
+                              *ngIf="empBaseDtl.currency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck">
+                            </ng-container>
+                          </tr>
+                          <tr style="font-style: italic;">
+                            <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
+                            <ng-container
+                              *ngIf="empBaseDtl.currency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck">
+                            </ng-container>
+                          </tr>
+                        </tbody>
+                      </div>
+                      <div class="cardFooter"></div>
+                    </div>
+                  </ng-template>
+                  <ng-template #monthRevenueDollar>
+                    <td class="dasbhoard-amount">
+                      <span style="font-size: 0.9vw;">&ensp;$</span>{{revenueObj.revenueAmount/100 | currency: '':''}}
+                    </td>
+                  </ng-template>
+                  <ng-template #monthRevenueRupeeCheck>
+                    <ng-container
+                      *ngIf="empBaseDtl.currency == 'INR'; then monthRevenueRupee; else noCurrencyMonthRevenue">
+                    </ng-container>
+                  </ng-template>
+                  <ng-template #monthRevenueRupee>
+                    <td class="dasbhoard-amount">
+                      <span
+                        style="font-size: 0.9vw;">&ensp;&#8377;</span>{{revenueObj.revenueAmount/100 | currency: '':''}}
+                    </td>
+                  </ng-template>
+                  <ng-template #noCurrencyMonthRevenue>
+                    <td class="dasbhoard-amount">&ensp;{{revenueObj.revenueAmount/100 | currency: '':''}}</td>
+                  </ng-template>
+                  <ng-template #monthCmiDollar>
+                    <td class="dasbhoard-amount">
+                      <span
+                        style="font-size: 0.9vw;">&ensp;$</span>{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}
+                    </td>
+                  </ng-template>
+                  <ng-template #monthCmiRupeeCheck>
+                    <ng-container *ngIf="empBaseDtl.currency == 'INR'; then monthCmiRupee; else noCurrencyMonthCmi">
+                    </ng-container>
+                  </ng-template>
+                  <ng-template #monthCmiRupee>
+                    <td class="dasbhoard-amount">
+                      <span
+                        style="font-size: 0.9vw;">&ensp;&#8377;</span>{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}
+                    </td>
+                  </ng-template>
+                  <ng-template #noCurrencyMonthCmi>
+                    <td class="dasbhoard-amount">&ensp;{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}</td>
+                  </ng-template>
+                </ng-container>
+              </div>
+              <p></p>
+              <div class="flex-row" fxlayout="row" style="width: 98%; padding-left: 20px; padding-bottom: 50px;">
+                <ng-container *ngFor="let revenueObj of dashboardRevenue; let revObjIdx = index;">
+                  <ng-container *ngIf="revObjIdx == 6; then julflex; else augcheck"></ng-container>
+                  <ng-template #julflex>
+                    <div fxflex="" fxflexorder="-1" style="flex: 1 1 0%; box-sizing: border-box;">
+                      <ng-container *ngIf="sowStart == revenueObj.revenueMonth; then dispStart; else checkStop">
+                      </ng-container>
+                      <ng-template #checkStop>
+                        <ng-container *ngIf="sowStop == revenueObj.revenueMonth; then dispStop; else checkForeSee">
+                        </ng-container>
+                      </ng-template>
+                      <ng-template #checkForeSee>
+                        <ng-container *ngIf="sowForeCast == revenueObj.revenueMonth; then dispForeSee; else dispOrd">
+                        </ng-container>
+                      </ng-template>
+                    </div>
+                  </ng-template>
+                  <ng-template #augcheck>
+                    <ng-container *ngIf="revObjIdx == 7; then augflex; else sepcheck"></ng-container>
+                  </ng-template>
+                  <ng-template #augflex>
+                    <div fxflex="" fxflexorder="1" style="flex: 1 1 0%; box-sizing: border-box;">
+                      <ng-container *ngIf="sowStart == revenueObj.revenueMonth; then dispStart; else checkStop">
+                      </ng-container>
+                      <ng-template #checkStop>
+                        <ng-container *ngIf="sowStop == revenueObj.revenueMonth; then dispStop; else checkForeSee">
+                        </ng-container>
+                      </ng-template>
+                      <ng-template #checkForeSee>
+                        <ng-container *ngIf="sowForeCast == revenueObj.revenueMonth; then dispForeSee; else dispOrd">
+                        </ng-container>
+                      </ng-template>
+                    </div>
+                  </ng-template>
+                  <ng-template #sepcheck>
+                    <ng-container *ngIf="revObjIdx == 8; then sepflex; else octcheck"></ng-container>
+                  </ng-template>
+                  <ng-template #sepflex>
+                    <div fxflex="" fxflexorder="2" style="flex: 1 1 0%; box-sizing: border-box;">
+                      <ng-container *ngIf="sowStart == revenueObj.revenueMonth; then dispStart; else checkStop">
+                      </ng-container>
+                      <ng-template #checkStop>
+                        <ng-container *ngIf="sowStop == revenueObj.revenueMonth; then dispStop; else checkForeSee">
+                        </ng-container>
+                      </ng-template>
+                      <ng-template #checkForeSee>
+                        <ng-container *ngIf="sowForeCast == revenueObj.revenueMonth; then dispForeSee; else dispOrd">
+                        </ng-container>
+                      </ng-template>
+                    </div>
+                  </ng-template>
+                  <ng-template #octcheck>
+                    <ng-container *ngIf="revObjIdx == 9; then octflex; else novcheck"></ng-container>
+                  </ng-template>
+                  <ng-template #octflex>
+                    <div fxflex="" fxflexorder="3" style="flex: 1 1 0%; box-sizing: border-box;">
+                      <ng-container *ngIf="sowStart == revenueObj.revenueMonth; then dispStart; else checkStop">
+                      </ng-container>
+                      <ng-template #checkStop>
+                        <ng-container *ngIf="sowStop == revenueObj.revenueMonth; then dispStop; else checkForeSee">
+                        </ng-container>
+                      </ng-template>
+                      <ng-template #checkForeSee>
+                        <ng-container *ngIf="sowForeCast == revenueObj.revenueMonth; then dispForeSee; else dispOrd">
+                        </ng-container>
+                      </ng-template>
+                    </div>
+                  </ng-template>
+                  <ng-template #novcheck>
+                    <ng-container *ngIf="revObjIdx == 10; then novflex; else deccheck"></ng-container>
+                  </ng-template>
+                  <ng-template #novflex>
+                    <div fxflex="" fxflexorder="4" style="flex: 1 1 0%; box-sizing: border-box;">
+                      <ng-container *ngIf="sowStart == revenueObj.revenueMonth; then dispStart; else checkStop">
+                      </ng-container>
+                      <ng-template #checkStop>
+                        <ng-container *ngIf="sowStop == revenueObj.revenueMonth; then dispStop; else checkForeSee">
+                        </ng-container>
+                      </ng-template>
+                      <ng-template #checkForeSee>
+                        <ng-container *ngIf="sowForeCast == revenueObj.revenueMonth; then dispForeSee; else dispOrd">
+                        </ng-container>
+                      </ng-template>
+                    </div>
+                  </ng-template>
+                  <ng-template #deccheck>
+                    <ng-container *ngIf="revObjIdx == 11; then decflex;"></ng-container>
+                  </ng-template>
+                  <ng-template #decflex>
+                    <div fxflex="" fxflexorder="5" style="flex: 1 1 0%; box-sizing: border-box;">
+                      <ng-container *ngIf="sowStart == revenueObj.revenueMonth; then dispStart; else checkStop">
+                      </ng-container>
+                      <ng-template #checkStop>
+                        <ng-container *ngIf="sowStop == revenueObj.revenueMonth; then dispStop; else checkForeSee">
+                        </ng-container>
+                      </ng-template>
+                      <ng-template #checkForeSee>
+                        <ng-container *ngIf="sowForeCast == revenueObj.revenueMonth; then dispForeSee; else dispOrd">
+                        </ng-container>
+                      </ng-template>
+                    </div>
+                  </ng-template>
+                  <ng-template #dispStart>
+                    <div class="soStartMarker" fxflex="" fxflexorder="-1">
+                      <h5 class="rev-month-hfive">{{revenueObj.revenueMonth | date: 'MMMM - yyyy'}}</h5>
+                      <div style="padding-top: 10px; padding-bottom: 20px;">
+                        <tbody>
+                          <tr style="font-style: italic;">
+                            <td style="text-align: right; font-size: 1vw;">Revenue&thinsp;:</td>
+                            <ng-container
+                              *ngIf="empBaseDtl.currency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck">
+                            </ng-container>
+                          </tr>
+                          <tr style="font-style: italic; padding: 30px;">
+                            <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
+                            <ng-container
+                              *ngIf="empBaseDtl.currency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck">
+                            </ng-container>
+                          </tr>
+                        </tbody>
+                      </div>
+                      <div class="cardFooter">Beeline Start</div>
+                    </div>
+                  </ng-template>
+                  <ng-template #dispStop>
+                    <div class="soStopMarker" fxflex="" fxflexorder="-1">
+                      <h5 class="rev-month-hfive">{{revenueObj.revenueMonth | date: 'MMMM - yyyy'}}</h5>
+                      <div style="padding-top: 10px; padding-bottom: 20px;">
+                        <tbody>
+                          <tr style="font-style: italic;">
+                            <td style="text-align: right; font-size: 1vw">Revenue&thinsp;:</td>
+                            <ng-container
+                              *ngIf="empBaseDtl.currency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck">
+                            </ng-container>
+                          </tr>
+                          <tr style="font-style: italic; padding: 30px;">
+                            <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
+                            <ng-container
+                              *ngIf="empBaseDtl.currency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck">
+                            </ng-container>
+                          </tr>
+                        </tbody>
+                      </div>
+                      <div class="cardFooter">Beeline End</div>
+                    </div>
+                  </ng-template>
+                  <ng-template #dispForeSee>
+                    <div class="soForeseeMarker" fxflex="" fxflexorder="-1">
+                      <h5 class="rev-month-hfive">{{revenueObj.revenueMonth | date: 'MMMM - yyyy'}}</h5>
+                      <div style="padding-top: 10px; padding-bottom: 20px;">
+                        <tbody>
+                          <tr style="font-style: italic;">
+                            <td style="text-align: right; font-size: 1vw;">Revenue&thinsp;:</td>
+                            <ng-container
+                              *ngIf="empBaseDtl.currency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck">
+                            </ng-container>
+                          </tr>
+                          <tr style="font-style: italic; padding: 30px;">
+                            <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
+                            <ng-container
+                              *ngIf="empBaseDtl.currency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck">
+                            </ng-container>
+                          </tr>
+                        </tbody>
+                      </div>
+                      <div class="cardFooter">Forecasted Beeline End</div>
+                    </div>
+                  </ng-template>
+                  <ng-template #dispOrd>
+                    <div class="ordMonth" fxflex="" fxflexorder="-1">
+                      <h5 class="rev-month-hfive">{{revenueObj.revenueMonth | date: 'MMMM - yyyy'}}</h5>
+                      <div style="padding-top: 10px; padding-bottom: 20px;">
+                        <tbody>
+                          <tr style="font-style: italic;">
+                            <td style="text-align: right; font-size: 1vw;">Revenue&thinsp;:</td>
+                            <ng-container
+                              *ngIf="empBaseDtl.currency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck">
+                            </ng-container>
+                          </tr>
+                          <tr style="font-style: italic; padding: 30px;">
+                            <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
+                            <ng-container
+                              *ngIf="empBaseDtl.currency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck">
+                            </ng-container>
+                          </tr>
+                        </tbody>
+                      </div>
+                      <div class="cardFooter"></div>
+                    </div>
+                  </ng-template>
+                  <ng-template #monthRevenueDollar>
+                    <td class="dasbhoard-amount">
+                      <span style="font-size: 0.9vw;">&ensp;$</span>{{revenueObj.revenueAmount/100 | currency: '':''}}
+                    </td>
+                  </ng-template>
+                  <ng-template #monthRevenueRupeeCheck>
+                    <ng-container
+                      *ngIf="empBaseDtl.currency == 'INR'; then monthRevenueRupee; else noCurrencyMonthRevenue">
+                    </ng-container>
+                  </ng-template>
+                  <ng-template #monthRevenueRupee>
+                    <td class="dasbhoard-amount">
+                      <span
+                        style="font-size: 0.9vw;">&ensp;&#8377;</span>{{revenueObj.revenueAmount/100 | currency: '':''}}
+                    </td>
+                  </ng-template>
+                  <ng-template #noCurrencyMonthRevenue>
+                    <td class="dasbhoard-amount">&ensp;{{revenueObj.revenueAmount/100 | currency: '':''}}</td>
+                  </ng-template>
+                  <ng-template #monthCmiDollar>
+                    <td class="dasbhoard-amount">
+                      <span
+                        style="font-size: 0.9vw;">&ensp;$</span>{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}
+                    </td>
+                  </ng-template>
+                  <ng-template #monthCmiRupeeCheck>
+                    <ng-container *ngIf="empBaseDtl.currency == 'INR'; then monthCmiRupee; else noCurrencyMonthCmi">
+                    </ng-container>
+                  </ng-template>
+                  <ng-template #monthCmiRupee>
+                    <td class="dasbhoard-amount">
+                      <span
+                        style="font-size: 0.9vw;">&ensp;&#8377;</span>{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}
+                    </td>
+                  </ng-template>
+                  <ng-template #noCurrencyMonthCmi>
+                    <td class="dasbhoard-amount">&ensp;{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}</td>
+                  </ng-template>
+                </ng-container>
+              </div>
+            </ng-template>
           </mat-tab>
         </mat-tab-group>
       </div>
     </mat-sidenav-container>
   </div>
-</ng-template>
-<ng-template #employeeDetailCheck>
-  <ng-container *ngIf="employeeDetail == true; then showEmployeeRevenue"></ng-container>
 </ng-template>
 <ng-template #showEmployeeRevenue>
   <div class="employee-detail-container">
@@ -81,20 +505,28 @@
       </mat-sidenav>
       <p></p>
       <div class="revenue-container">
-        <ng-container *ngIf="employeesAvailable == 0; then refreshRevenue; else refreshRevenue"></ng-container>
+        <ng-container *ngIf="employeesAvailable == 0; then revContNoEmployee; else refreshEmpRevCheck"></ng-container>
       </div>
     </mat-sidenav-container>
   </div>
 </ng-template>
+<ng-template #refreshEmpRevCheck>
+  <ng-container *ngIf="noRevForSelEmp == true; then noEmpRev; else refreshRevenue;"></ng-container>
+</ng-template>
 <ng-template #sideNavNoEmployees>
   <mat-list-item>No employees allocated for {{revenueYear}}</mat-list-item>
+</ng-template>
+<ng-template #revContNoEmployee>
+  <div class="project-name">No employees allocated for revenue year {{revenueYear}} !</div>
 </ng-template>
 <ng-template #listEmployees>
   <mat-list-item (click)="getEmployeeRevenue(revenueYear, empObj._id)" *ngFor="let empObj of empList">
     {{empObj.empLname}},&ensp;{{empObj.empFname}}</mat-list-item>
 </ng-template>
-<ng-template #noEmployees>
-  <div class="project-name">No employees found for selected revenue year {{revenueYear}} !</div>
+<ng-template #noEmpRev>
+  <div class="project-name">
+    <span>No revenue available for {{empBaseDtl.empLname}}, {{empBaseDtl.empFname}} in {{revenueYear}} !</span>
+  </div>
 </ng-template>
 <ng-template #refreshRevenue>
   <ng-container *ngIf="!empBaseDtl.projName; then noProjName; else showProjName"></ng-container>
@@ -308,7 +740,7 @@
         </div>
       </ng-template>
       <ng-template #monthRevenueDollar>
-        <td class="amount-data">
+        <td class="emp-month-amount">
           <span style="font-size: 0.9vw;">&ensp;$</span>{{revenueObj.revenueAmount/100 | currency: '':''}}
         </td>
       </ng-template>
@@ -317,15 +749,15 @@
         </ng-container>
       </ng-template>
       <ng-template #monthRevenueRupee>
-        <td class="amount-data">
+        <td class="emp-month-amount">
           <span style="font-size: 0.9vw;">&ensp;&#8377;</span>{{revenueObj.revenueAmount/100 | currency: '':''}}
         </td>
       </ng-template>
       <ng-template #noCurrencyMonthRevenue>
-        <td class="amount-data">&ensp;{{revenueObj.revenueAmount/100 | currency: '':''}}</td>
+        <td class="emp-month-amount">&ensp;{{revenueObj.revenueAmount/100 | currency: '':''}}</td>
       </ng-template>
       <ng-template #monthCmiDollar>
-        <td class="amount-data">
+        <td class="emp-month-amount">
           <span style="font-size: 0.9vw;">&ensp;$</span>{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}
         </td>
       </ng-template>
@@ -334,12 +766,12 @@
         </ng-container>
       </ng-template>
       <ng-template #monthCmiRupee>
-        <td class="amount-data">
+        <td class="emp-month-amount">
           <span style="font-size: 0.9vw;">&ensp;&#8377;</span>{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}
         </td>
       </ng-template>
       <ng-template #noCurrencyMonthCmi>
-        <td class="amount-data">&ensp;{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}</td>
+        <td class="emp-month-amount">&ensp;{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}</td>
       </ng-template>
     </ng-container>
   </div>
@@ -531,7 +963,7 @@
         </div>
       </ng-template>
       <ng-template #monthRevenueDollar>
-        <td class="amount-data">
+        <td class="emp-month-amount">
           <span style="font-size: 0.9vw;">&ensp;$</span>{{revenueObj.revenueAmount/100 | currency: '':''}}
         </td>
       </ng-template>
@@ -540,15 +972,15 @@
         </ng-container>
       </ng-template>
       <ng-template #monthRevenueRupee>
-        <td class="amount-data">
+        <td class="emp-month-amount">
           <span style="font-size: 0.9vw;">&ensp;&#8377;</span>{{revenueObj.revenueAmount/100 | currency: '':''}}
         </td>
       </ng-template>
       <ng-template #noCurrencyMonthRevenue>
-        <td class="amount-data">&ensp;{{revenueObj.revenueAmount/100 | currency: '':''}}</td>
+        <td class="emp-month-amount">&ensp;{{revenueObj.revenueAmount/100 | currency: '':''}}</td>
       </ng-template>
       <ng-template #monthCmiDollar>
-        <td class="amount-data">
+        <td class="emp-month-amount">
           <span style="font-size: 0.9vw;">&ensp;$</span>{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}
         </td>
       </ng-template>
@@ -557,12 +989,12 @@
         </ng-container>
       </ng-template>
       <ng-template #monthCmiRupee>
-        <td class="amount-data">
+        <td class="emp-month-amount">
           <span style="font-size: 0.9vw;">&ensp;&#8377;</span>{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}
         </td>
       </ng-template>
       <ng-template #noCurrencyMonthCmi>
-        <td class="amount-data">&ensp;{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}</td>
+        <td class="emp-month-amount">&ensp;{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}</td>
       </ng-template>
     </ng-container>
   </div>

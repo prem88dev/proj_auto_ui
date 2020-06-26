@@ -118,9 +118,14 @@
   padding-top: 5px;
 }
 
-.amount-data {
+.emp-month-amount {
   padding-right: 10px;
   font-size: 1.3vw;
+}
+
+.dasbhoard-amount {
+  padding-right: 10px;
+  font-size: 1vw;
 }
 
 .employee-name {

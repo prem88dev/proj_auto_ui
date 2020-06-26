@@ -56,7 +56,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 
 const paths: Routes = [
-  { path: 'dashboard', component: DashboardComponent },
+  { path: 'home', component: DashboardComponent },
   { path: 'projectList', component: ListAllProjectComponent },
   { path: 'addProject', component: AddProjectComponent },
   { path: '**', component: DashboardComponent }

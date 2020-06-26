@@ -5,6 +5,7 @@ import { EmployeeService } from '../services/employee.service'
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatTabGroup, MatTab, MatTabChangeEvent } from '@angular/material';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,7 +16,7 @@ export class DashboardComponent implements OnInit {
 
   private dashboardRevenue = [];
   private projectList = [];
-  private allProjEmpList = [];
+  private projectWorkforce = [];
   private empList = [];
   private employeesAvailable = 0;
   private columns = [];
@@ -37,6 +38,8 @@ export class DashboardComponent implements OnInit {
   private totalCmiRevenue: number = 0;
   private revenueYear: string = "";
   private currentYear = new Date().getFullYear();
+  private selectedProject = [];
+  private noRevForSelEmp = false;
 
   destroy$: Subject<Boolean> = new Subject<Boolean>();
 
@@ -92,35 +95,23 @@ export class DashboardComponent implements OnInit {
 
     this.projectService.projectList().pipe(takeUntil(this.destroy$)).subscribe((projectList: any[]) => {
       this.projectList = projectList;
-      console.log(this.projectList);
     });
 
-    this.employeeService.allEmployees().pipe(takeUntil(this.destroy$)).subscribe((allProjEmpList: any[]) => {
-      this.allProjEmpList = allProjEmpList;
-      console.log(this.allProjEmpList);
-    });
-
-    this.dashboardService.dashboard(this.revenueYear).pipe(takeUntil(this.destroy$)).subscribe((dashboardRevenue: any[]) => {
-      this.dashboardRevenue = dashboardRevenue;
+    this.employeeService.allEmployees().pipe(takeUntil(this.destroy$)).subscribe((projectWorkforce: any[]) => {
+      this.projectWorkforce = projectWorkforce;
     });
 
     this.dashboardDetail = true;
-    console.log(this.dashboardDetail);
-    console.log(this.employeeDetail);
   }
 
   public getEmployeeRevenue(selectedYear: string, selectedEmployee: string) {
     this.dashboardDetail = false;
     let splitStr = selectedEmployee.split("-");
-    console.log(selectedEmployee);
-    console.log(splitStr[0].toString());
     this.employeeService.projectEmployees(splitStr[0].toString(), selectedYear).pipe(takeUntil(this.destroy$)).subscribe((projEmpList: any[]) => {
       this.empList = projEmpList;
       this.employeesAvailable = this.empList.length;
-      console.log("employees available: " + this.employeesAvailable)
     });
     this.employeeService.employeeRevenue(selectedYear, selectedEmployee).pipe(takeUntil(this.destroy$)).subscribe((empRev: any[]) => {
-      console.log(empRev);
       if (empRev.length > 1) {
         this.empObj = empRev;
         this.empBaseDtl = this.empObj[0];
@@ -149,12 +140,25 @@ export class DashboardComponent implements OnInit {
           this.sowForeCast = splitStr[1] + "-" + splitStr[2];
         }
 
+        let sowStart = new Date(this.empBaseDtl["sowStart"]);
+        let sowStop = new Date(this.empBaseDtl["sowStop"]);
+        let sowForeSeen = new Date(sowStop);
+        if (this.empBaseDtl["foreseenSowStop"].length > 0) {
+          sowForeSeen = new Date(this.empBaseDtl["foreseenSowStop"]);
+        }
+
+        let iRevenueYear = parseInt(this.revenueYear, 10);
+        if (iRevenueYear < sowStart.getFullYear() || (iRevenueYear > sowStop.getFullYear() && iRevenueYear > sowForeSeen.getFullYear())) {
+          this.noRevForSelEmp = true;
+        } else {
+          this.noRevForSelEmp = false;
+        }
+
+        console.log(this.noRevForSelEmp);
         this.revenue.forEach((revenueObj) => {
           this.totalRevenue += revenueObj.revenueAmount;
           this.totalCmiRevenue += revenueObj.cmiRevenueAmount;
         });
-        console.log(this.dashboardDetail);
-        console.log(this.employeeDetail);
       } else {
         alert("No data found");
       }
@@ -167,6 +171,16 @@ export class DashboardComponent implements OnInit {
   }
 
   public goToHome() {
+    this.router.navigateByUrl('/home');
+  }
+
+  public getDashboardRevenue(eventObj: MatTabChangeEvent) {
+    this.selectedProject = this.projectWorkforce[eventObj.index][0];
+    this.projectService.projectRevenue(this.selectedProject["_id"], this.revenueYear).pipe(takeUntil(this.destroy$)).subscribe((projectRevenue: any[]) => {
+      this.dashboardRevenue = projectRevenue[projectRevenue.length - 1].projectRevenue;
+    });
+    this.employeeDetail = false;
+    this.dashboardDetail = true;
   }
 
   ngOnDestroy() {
