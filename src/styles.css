@@ -11,13 +11,4 @@
 
 .basic-container {
   padding: 30px;
- }
- .version-info {
-  font-size: 8pt;
-  float: right;
-  margin: 8px;
- }
-
-.mat-tab-header-pagination .mat-tab-header-pagination-disabled {
-  display: none !important;
 }

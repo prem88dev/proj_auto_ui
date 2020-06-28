@@ -13,38 +13,40 @@
   user-select: none;
   box-shadow: inset 0 0 2px 2px rgba(100, 85, 85, 0.3);
   padding: 5px;
-  width: 15.3vw;
+  width: 14.5vw;
   border-radius: 0.3vw;
   padding-left: 10px;
   transition-delay: 0.5s;
   -webkit-transition-delay: 0.5s;
+  margin: 10px;
 }
  
 .soStartMarker {
   user-select: none;
   background: rgb(151, 245, 146);
   padding: 5px;
-  width: 15.3vw;
+  width: 14.5vw;
   border-radius: 0.3vw;
   padding-left: 10px;
+  margin: 10px;
 }
 
 .soStopMarker {
   user-select: none;
   background: rgb(255, 121, 121);
   padding: 5px;
-  width: 15.3vw;
+  width: 14.5vw;
   border-radius: 0.3vw;
-  padding-left: 10px;
+  margin: 10px;
 }
 
 .soForeseeMarker {
   user-select: none;
   background: rgb(255, 246, 125);
   padding: 5px;
-  width: 15.3vw;
+  width: 14.5vw;
   border-radius: 0.3vw;
-  padding-left: 10px;
+  margin: 10px;
 }
 
 .cardFooter {
@@ -83,6 +85,7 @@
 .ordMonth:active {
   box-shadow: none;
   transition: 0.2s;
+  background: rgb(124, 124, 255);
 }
 
 .soStartMarker:active {
@@ -173,6 +176,8 @@
   flex-direction: row;
   box-sizing: border-box;
   display: flex;
+  padding-left: 10px;
+  padding-bottom: 20px;
 }
 
 .menu-icon {
@@ -195,6 +200,7 @@
   /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
      causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
   flex: 1;
+  
 }
 
 .revenue-amount {

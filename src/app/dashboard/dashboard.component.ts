@@ -4,7 +4,7 @@ import { EmployeeService } from '../services/employee.service'
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatTabGroup, MatTabChangeEvent } from '@angular/material';
+import { MatTabGroup } from '@angular/material';
 
 @Component({
   selector: 'app-dashboard',
@@ -61,12 +61,15 @@ export class DashboardComponent implements OnInit {
     } else if (selectedYear.trim() === "Select Year") {
       this.revenueYear = this.currentYear.toString();
     }
-    this.employeeService.listProjectEmployees(splitStr[0].toString(), selectedYear).pipe(takeUntil(this.destroy$)).subscribe((projEmpList: any[]) => {
+
+    this.employeeService.listProjectEmployees("", selectedYear).pipe(takeUntil(this.destroy$)).subscribe((projEmpList: any[]) => {
       this.empList = projEmpList;
       this.employeesAvailable = this.empList.length;
     });
+
     this.employeeService.employeeRevenue(selectedYear, selectedEmployee).pipe(takeUntil(this.destroy$)).subscribe((empRev: any[]) => {
       if (empRev.length > 1) {
+        console.log(empRev);
         this.empObj = empRev;
         this.empBaseDtl = this.empObj[0];
         this.empLeave = this.empObj[1].leaves;
@@ -140,7 +143,23 @@ export class DashboardComponent implements OnInit {
   }
 
   public goToHome() {
-    this.router.navigateByUrl('/home');
+    this.router.navigate(['/home']);
+  }
+
+  public employeeMonthDetailView(monthIndex: string) {
+    console.log(this.empBaseDtl);
+    let startDate = new Date(parseInt(this.revenueYear, 10), parseInt(monthIndex, 10), 1);
+    let stopDate = new Date(parseInt(this.revenueYear, 10), parseInt(monthIndex, 10) + 1, 0);
+    let totalWorkHours = 0;
+    for (let nextDate = startDate; nextDate.getTime() <= stopDate.getTime(); nextDate.setDate(nextDate.getDate() + 1)) {
+      if (nextDate.getDay() > 0 && nextDate.getDay() < 6) {
+        totalWorkHours += parseInt(this.empBaseDtl["wrkHrPerDay"], 10);
+      }
+    }
+    console.log(totalWorkHours);
+  }
+
+  public dashboardMonthDetailView(monthIndex: string, projectId: string) {
   }
 
   public getDashboardRevenue(selectedTab: MatTabGroup, forYear: string) {

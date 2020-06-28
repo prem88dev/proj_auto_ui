@@ -122,9 +122,12 @@ const paths: Routes = [
     FormsModule,
     ReactiveFormsModule
   ],
+  
   providers: [
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } }
   ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+platformBrowserDynamic().bootstrapModule(AppModule).catch(err => console.error(err));
