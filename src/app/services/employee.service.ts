@@ -23,20 +23,15 @@ export class EmployeeService {
     return throwError(errorMessage);
   }
 
-  public allEmployees() {
+  public listAllEmployees() {
     const allEmpListUrl = "http://localhost:5454/workforce";
     return this.httpClient.get(allEmpListUrl).pipe(catchError(this.handleError));
   }
 
-  public projectEmployees(esaId: string, revenueYear: string) {
-    if (esaId === undefined || esaId === null || esaId === "") {
-      alert("ESA ID not provided");
-    } else if (revenueYear === undefined || revenueYear === null || revenueYear === "") {
-      alert("Revenue year not provided");
-    } else {
-      const employeeListUrl = "http://localhost:5454/workforce?esaId=" + esaId + "&revenueYear=" + revenueYear;
-      return this.httpClient.get(employeeListUrl).pipe(catchError(this.handleError));
-    }
+  public listProjectEmployees(esaId?: string, revenueYear?: string) {
+    const employeeListUrl = "http://localhost:5454/workforce?esaId=" + esaId + "&revenueYear=" + revenueYear;
+    console.log(employeeListUrl);
+    return this.httpClient.get(employeeListUrl).pipe(catchError(this.handleError));
   }
 
   public employeeRevenue(revenueYear: string, employeeFilter: string) {

@@ -25,7 +25,6 @@ export class DashboardService {
 
   public dashboard(revenueYear: string) {
     const getAllProjRevUrl = "http://localhost:5454/dashboard?revenueYear=" + revenueYear;
-    console.log(getAllProjRevUrl);
     return this.httpClient.get(getAllProjRevUrl).pipe(catchError(this.handleError));
   }
 }

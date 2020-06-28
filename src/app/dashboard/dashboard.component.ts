@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { DashboardService } from '../services/dashboard.service';
 import { ProjectService } from '../services/project.service';
 import { EmployeeService } from '../services/employee.service'
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatTabGroup, MatTab, MatTabChangeEvent } from '@angular/material';
+import { MatTabGroup, MatTabChangeEvent } from '@angular/material';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,8 +20,8 @@ export class DashboardComponent implements OnInit {
   private employeesAvailable = 0;
   private columns = [];
   private minMaxYear = [];
-  private dashboardDetail: Boolean = false;
-  private employeeDetail: Boolean = false;
+  private showDashboard: Boolean = false;
+  private showEmployee: Boolean = false;
   private empObj = [];
   private empBaseDtl = [];
   private empLeave: string = "";
@@ -38,76 +37,31 @@ export class DashboardComponent implements OnInit {
   private totalCmiRevenue: number = 0;
   private revenueYear: string = "";
   private currentYear = new Date().getFullYear();
-  private selectedProject = [];
+  private selProjectObj = [];
+  private selectedProject: string = "";
   private noRevForSelEmp = false;
+  private projectBillingCurrency = "";
+  private refreshDashboardRevenue: Boolean = false;
 
   destroy$: Subject<Boolean> = new Subject<Boolean>();
 
   constructor(
-    private dashboardService: DashboardService,
     private projectService: ProjectService,
     private employeeService: EmployeeService,
     private activatedRoute: ActivatedRoute,
     private router: Router
   ) { }
 
-  ngOnInit() {
-    this.employeeDetail = false;
-    let yearParam = this.activatedRoute.snapshot.paramMap.get('revenueYear');
-    if (yearParam !== null && yearParam !== "" && yearParam !== undefined) {
-      this.revenueYear = yearParam;
-    } else {
-      this.revenueYear = this.currentYear.toString();
-    }
-    this.columns = [
-      "Project ID",
-      "Jan-" + this.revenueYear,
-      "Feb-" + this.revenueYear,
-      "Mar-" + this.revenueYear,
-      "Apr-" + this.revenueYear,
-      "May-" + this.revenueYear,
-      "Jun-" + this.revenueYear,
-      "Jul-" + this.revenueYear,
-      "Aug-" + this.revenueYear,
-      "Sep-" + this.revenueYear,
-      "Oct-" + this.revenueYear,
-      "Nov-" + this.revenueYear,
-      "Dec-" + this.revenueYear,
-    ];
-
-    this.employeeService.getMinMaxAllocYear("").pipe(takeUntil(this.destroy$)).subscribe((projMinMaxYear: any[]) => {
-      let startYear = this.currentYear;
-      let stopYear = this.currentYear;
-      if (projMinMaxYear.length === 1) {
-        startYear = projMinMaxYear[0].minYear;
-        stopYear = projMinMaxYear[0].maxYear;
-      }
-
-      if (startYear < stopYear) {
-        for (let listStart = startYear; listStart <= stopYear; listStart++) {
-          /*this.minMaxYear.push({ "id": listStart, "label": listStart });*/
-          this.minMaxYear.push(listStart);
-        }
-      } else if (startYear === stopYear) {
-        this.minMaxYear.push(startYear);
-      }
-    });
-
-    this.projectService.projectList().pipe(takeUntil(this.destroy$)).subscribe((projectList: any[]) => {
-      this.projectList = projectList;
-    });
-
-    this.employeeService.allEmployees().pipe(takeUntil(this.destroy$)).subscribe((projectWorkforce: any[]) => {
-      this.projectWorkforce = projectWorkforce;
-    });
-
-    this.dashboardDetail = true;
-  }
 
   public getEmployeeRevenue(selectedYear: string, selectedEmployee: string) {
-    this.dashboardDetail = false;
+    this.showDashboard = false;
     let splitStr = selectedEmployee.split("-");
-    this.employeeService.projectEmployees(splitStr[0].toString(), selectedYear).pipe(takeUntil(this.destroy$)).subscribe((projEmpList: any[]) => {
+    if (selectedYear !== "" && selectedYear.trim() !== "Select Year" && selectedYear.length === 4) {
+      this.revenueYear = selectedYear
+    } else if (selectedYear.trim() === "Select Year") {
+      this.revenueYear = this.currentYear.toString();
+    }
+    this.employeeService.listProjectEmployees(splitStr[0].toString(), selectedYear).pipe(takeUntil(this.destroy$)).subscribe((projEmpList: any[]) => {
       this.empList = projEmpList;
       this.employeesAvailable = this.empList.length;
     });
@@ -154,7 +108,6 @@ export class DashboardComponent implements OnInit {
           this.noRevForSelEmp = false;
         }
 
-        console.log(this.noRevForSelEmp);
         this.revenue.forEach((revenueObj) => {
           this.totalRevenue += revenueObj.revenueAmount;
           this.totalCmiRevenue += revenueObj.cmiRevenueAmount;
@@ -162,25 +115,73 @@ export class DashboardComponent implements OnInit {
       } else {
         alert("No data found");
       }
-      this.employeeDetail = true;
+      this.showEmployee = true;
     });
   }
 
-  public onChange(selectedYear: string, selectedEmployee: string) {
-    this.getEmployeeRevenue(selectedYear, selectedEmployee);
+  public refreshDashboard(forYear: string, forProject: string) {
+    this.showDashboard = true;
+    this.revenueYear = forYear;
+    this.employeeService.listProjectEmployees("", this.revenueYear).pipe(takeUntil(this.destroy$)).subscribe((projEmpList: any[]) => {
+      this.empList = projEmpList;
+      console.log(this.empList);
+      this.employeesAvailable = this.empList.length;
+    });
+    this.projectService.projectRevenue(forProject, forYear).pipe(takeUntil(this.destroy$)).subscribe((projectRevenueDump: any[]) => {
+      if (projectRevenueDump.length >= 1) {
+        this.selectedProject = forProject;
+        this.dashboardRevenue = projectRevenueDump[projectRevenueDump.length - 1].projectRevenue;
+        this.projectBillingCurrency = projectRevenueDump[projectRevenueDump.length - 1].currency;
+        this.refreshDashboardRevenue = true;
+      } else {
+        this.refreshDashboardRevenue = false;
+      }
+    });
   }
 
   public goToHome() {
     this.router.navigateByUrl('/home');
   }
 
-  public getDashboardRevenue(eventObj: MatTabChangeEvent) {
-    this.selectedProject = this.projectWorkforce[eventObj.index][0];
-    this.projectService.projectRevenue(this.selectedProject["_id"], this.revenueYear).pipe(takeUntil(this.destroy$)).subscribe((projectRevenue: any[]) => {
-      this.dashboardRevenue = projectRevenue[projectRevenue.length - 1].projectRevenue;
+  public getDashboardRevenue(selectedTab: MatTabGroup, forYear: string) {
+    let tabIndex: number = selectedTab["index"];
+    this.selProjectObj = this.empList[tabIndex];
+    let forProject = this.selProjectObj["_id"].toString();
+    if (forYear == "" || forYear == "Select Year") {
+      forYear = this.revenueYear;
+    }
+    this.refreshDashboard(forYear, forProject);
+  }
+
+  ngOnInit() {
+    this.revenueYear = this.currentYear.toString();
+    this.employeeService.getMinMaxAllocYear("").pipe(takeUntil(this.destroy$)).subscribe((projMinMaxYear: any[]) => {
+      let startYear = this.currentYear;
+      let stopYear = this.currentYear;
+      if (projMinMaxYear.length === 1) {
+        startYear = projMinMaxYear[0].minYear;
+        stopYear = projMinMaxYear[0].maxYear;
+      }
+
+      if (startYear < stopYear) {
+        for (let listStart = startYear; listStart <= stopYear; listStart++) {
+          this.minMaxYear.push(listStart);
+        }
+      } else if (startYear === stopYear) {
+        this.minMaxYear.push(startYear);
+      }
     });
-    this.employeeDetail = false;
-    this.dashboardDetail = true;
+
+    this.projectService.projectList().pipe(takeUntil(this.destroy$)).subscribe((projectListDump: any[]) => {
+      this.projectList = projectListDump;
+    });
+
+    this.employeeService.listAllEmployees().pipe(takeUntil(this.destroy$)).subscribe((projectWorkforce: any[]) => {
+      this.empList = projectWorkforce;
+    });
+
+    this.refreshDashboardRevenue = true;
+    this.showDashboard = true;
   }
 
   ngOnDestroy() {

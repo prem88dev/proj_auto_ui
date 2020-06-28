@@ -2,18 +2,22 @@
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 
 .right-aligned-header > .mat-content {
-   justify-content: left;
+  justify-content: left;
 }
 
 .mat-content > mat-panel-title, .mat-content > mat-panel-description {
- flex: 0 0 auto;
+  flex: 0 0 auto;
 }
 
 .basic-container {
-   padding: 30px;
+  padding: 30px;
  }
  .version-info {
-   font-size: 8pt;
-   float: right;
-   margin: 8px;
+  font-size: 8pt;
+  float: right;
+  margin: 8px;
  }
+
+.mat-tab-header-pagination .mat-tab-header-pagination-disabled {
+  display: none !important;
+}
