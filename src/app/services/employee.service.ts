@@ -30,7 +30,6 @@ export class EmployeeService {
 
   public listProjectEmployees(esaId?: string, revenueYear?: string) {
     const employeeListUrl = "http://localhost:5454/workforce?esaId=" + esaId + "&revenueYear=" + revenueYear;
-    console.log(employeeListUrl);
     return this.httpClient.get(employeeListUrl).pipe(catchError(this.handleError));
   }
 

@@ -12,3 +12,7 @@
 .basic-container {
   padding: 30px;
 }
+
+.mat-tab-body-wrapper {
+  height: 21vw;
+}

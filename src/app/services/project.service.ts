@@ -30,7 +30,6 @@ export class ProjectService {
 
   public projectRevenue(esaId: string, revenueYear: string) {
     const projectRevenueUrl = "http://localhost:5454/projectRevenue?esaId=" + esaId + "&revenueYear=" + revenueYear;
-    console.log(projectRevenueUrl);
     return this.httpClient.get(projectRevenueUrl).pipe(catchError(this.handleError));
   }
 }

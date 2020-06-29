@@ -51,9 +51,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
-
+import { DashboardDetailviewComponent } from './dashboard/dashboard-detailview/dashboard-detailview.component';
 
 const paths: Routes = [
   { path: 'home', component: DashboardComponent },
@@ -69,7 +68,8 @@ const paths: Routes = [
     ListAllProjectComponent,
     EditProjectComponent,
     AddProjectComponent,
-    DashboardComponent
+    DashboardComponent,
+    DashboardDetailviewComponent
   ],
   imports: [
     BrowserModule,
@@ -122,12 +122,11 @@ const paths: Routes = [
     FormsModule,
     ReactiveFormsModule
   ],
-  
   providers: [
-    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } }
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },
+    DashboardDetailviewComponent
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: []
 })
 export class AppModule { }
-
-platformBrowserDynamic().bootstrapModule(AppModule).catch(err => console.error(err));

@@ -54,7 +54,7 @@
               <div class="flex-row" fxlayout="row" style="width: 98%;">
                 <ng-container *ngFor="let revenueObj of dashboardRevenue; let revObjIdx = index;">
                   <ng-container *ngIf="revObjIdx >= 0 && revObjIdx <= 5;">
-                    <div class="ordMonth" fxflex="" fxflexorder="-1">
+                    <div class="ordMonth" fxflex="" fxflexorder="-1" (click)="dashboardMonthDetailView(revObjIdx, revenueYear)">
                       <h5 class="rev-month-hfive">{{revenueObj.revenueMonth | date: 'MMMM - yyyy'}}</h5>
                       <tbody>
                         <tr style="font-style: italic;">
@@ -106,7 +106,7 @@
               <div class="flex-row" fxlayout="row" style="width: 98%;">
                 <ng-container *ngFor="let revenueObj of dashboardRevenue; let revObjIdx = index;">
                   <ng-container *ngIf="revObjIdx >= 6 && revObjIdx <= 11;">
-                    <div class="ordMonth" fxflex="" fxflexorder="-1">
+                    <div class="ordMonth" fxflex="" fxflexorder="-1" (click)="dashboardMonthDetailView(revObjIdx, revenueYear)">
                       <h5 class="rev-month-hfive">{{revenueObj.revenueMonth | date: 'MMMM - yyyy'}}</h5>
                       <tbody>
                         <tr style="font-style: italic;">
@@ -174,7 +174,7 @@
       <td class="esa-id" style="width: 43%;">{{empBaseDtl.esaId}}&ensp;&ndash;&ensp;{{empBaseDtl.esaDesc}}</td>
       <td class="esa-id" style="width: 38%;">{{revenueYear}} Revenue</td>
       <td class="esa-id" style="font-size: 1.3vw; width: 13%;">
-        <select style="font-style: italic; font-size: 1.2vw; border-radius: 3px; padding: 2px" (change)="getEmployeeRevenue($event.target.value)">
+        <select style="font-style: italic; font-size: 1.2vw; border-radius: 3px; padding: 2px" (change)="getEmployeeRevenue($event.target.value, empBaseDtl._id)">
           <option>&nbsp;Select Year&nbsp;</option>
           <option *ngFor="let listYear of minMaxYear">{{listYear}}</option>
         </select>
