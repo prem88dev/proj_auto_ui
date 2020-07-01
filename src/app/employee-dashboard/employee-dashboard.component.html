@@ -1,237 +1,71 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=block" rel="stylesheet">
-<ng-container *ngIf="showDashboard == true; then projectDashboard; else employeeDashboard"></ng-container>
-<ng-template #projectDashboard>
-  <div class="employee-detail-container">
-    <div style="float: left; width: 100%; padding-top: 10px; padding-bottom: 10px;">
-      <div style="display: table-cell; vertical-align: middle;">
-        <button mat-icon-button (click)="snav.toggle()" style="border: none; outline: none;">
-          <mat-icon style="font-size: 2vw;">menu</mat-icon>
+<div class="employee-detail-container">
+  <div style="float: left; width: 100%; padding-top: 10px; padding-bottom: 10px;">
+    <div style="display: table-cell; vertical-align: middle;">
+      <button mat-icon-button (click)="snav.toggle()" style="border: none; outline: none;">
+        <mat-icon style="font-size: 2vw;">menu</mat-icon>
+      </button>
+    </div>
+    <td class="esa-id" style="width: 43%;">{{empBaseDtl.esaId}}&ensp;&ndash;&ensp;{{empBaseDtl.esaDesc}}</td>
+    <td class="esa-id" style="width: 38%;">{{revenueYear}} Revenue</td>
+    <td class="esa-id" style="font-size: 1.3vw; width: 13%;">
+      <select style="font-style: italic; font-size: 1.2vw; border-radius: 3px; padding: 2px" (change)="getEmployeeRevenue($event.target.value, empBaseDtl._id)">
+        <option>&nbsp;Select Year&nbsp;</option>
+        <option *ngFor="let listYear of minMaxYear">{{listYear}}</option>
+      </select>
+    </td>
+    <td style="width: 40%;">
+      <div style="float: right; width: 100%">
+        <button mat-icon-button (click)="goToHome()" style="border: none; outline: none;">
+          <mat-icon style="font-size: 2vw; vertical-align: middle;">home</mat-icon>
         </button>
       </div>
-      <td class="navbar-header"><span>{{revenueYear}} Dashboard</span></td>
-      <td class="esa-id" style="font-size: 1.3vw; width: 13%;">
-        <select style="font-style: italic; font-size: 1.2vw; border-radius: 3px; padding: 2px" (change)="refreshDashboard($event.target.value, this.selectedProject)">
-          <option>&nbsp;Select Year&nbsp;</option>
-          <option *ngFor="let listYear of minMaxYear">{{listYear}}</option>
-        </select>
-      </td>
-    </div>
-
-    <mat-sidenav-container class="revenue-sidenav-container">
-      <mat-sidenav #snav [mode]="'over'" fixedTopGap="80">
-        <mat-nav-list style="font-style: italic;">
-          <mat-accordion>
-            <mat-expansion-panel *ngFor="let projEmpObj of empList">
-              <mat-expansion-panel-header class="right-aligned-header">
-                <mat-panel-title style="font-size: 1vw;">{{projEmpObj.esaDesc}}</mat-panel-title>
-                <mat-panel-description style="font-size: 1vw;">(&thinsp;{{projEmpObj._id}}&thinsp;)</mat-panel-description>
-              </mat-expansion-panel-header>
-              <mat-divider></mat-divider>
-              <ng-container *ngIf="projEmpObj.workforce.length == 0; then dashSideNavNoEmp; else dashSideNavListEmp"></ng-container>
-              <ng-template #dashSideNavNoEmp>
-                <mat-list-item style="font-style: italic;">No employees allocated for {{revenueYear}}</mat-list-item>
-              </ng-template>
-              <ng-template #dashSideNavListEmp>
-                <ng-container *ngFor="let empObj of projEmpObj.workforce; let lastVal = last">
-                  <mat-list-item (click)="getEmployeeRevenue(revenueYear, empObj.employeeLinker)" style="font-style: italic;">
-                    {{empObj.empLname}},&ensp;{{empObj.empFname}}
-                    <mat-divider *ngIf="!lastVal"></mat-divider>
-                  </mat-list-item>
-                </ng-container>
-              </ng-template>
-            </mat-expansion-panel>
-          </mat-accordion>
-        </mat-nav-list>
-      </mat-sidenav>
-      <div class="mat-app-background basic-container" style="font-style: italic;">
-        <mat-tab-group mat-align-tabs="left" (selectedTabChange)="getDashboardRevenue($event, revenueYear)">
-          <mat-tab label="{{projEmpObj.esaDesc}}" *ngFor="let projEmpObj of empList">
-            <br>
-            <ng-container *ngIf="refreshDashboardRevenue == true; then refreshDashboard; else noDashboardRevenue"></ng-container>
-            <ng-template #refreshDashboard>
-              <div style="float: left; width: 100%;">Click on each month to view detailed summary</div>
-              <p></p>
-              <div class="flex-row" fxlayout="row" style="width: 98%;">
-                <ng-container *ngFor="let revenueObj of dashboardRevenue; let revObjIdx = index;">
-                  <ng-container *ngIf="revObjIdx >= 0 && revObjIdx <= 5;">
-                    <div class="ordMonth" fxflex="" fxflexorder="-1" (click)="dashboardMonthDetailView(revObjIdx, revenueYear)">
-                      <h5 class="rev-month-hfive">{{revenueObj.revenueMonth | date: 'MMMM - yyyy'}}</h5>
-                      <tbody>
-                        <tr style="font-style: italic;">
-                          <td style="text-align: right; font-size: 1vw;">Revenue&thinsp;:</td>
-                          <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
-                        </tr>
-                        <tr style="font-style: italic;">
-                          <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
-                          <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
-                        </tr>
-                      </tbody>
-                      <p></p>
-                    </div>
-                  </ng-container>
-                  <ng-template #monthRevenueDollar>
-                    <td class="dasbhoard-amount">
-                      <span style="font-size: 0.9vw;">&ensp;$</span>{{revenueObj.revenueAmount/100 | currency: '':''}}
-                    </td>
-                  </ng-template>
-                  <ng-template #monthRevenueRupeeCheck>
-                    <ng-container *ngIf="projectBillingCurrency == 'INR'; then monthRevenueRupee; else noCurrencyMonthRevenue"></ng-container>
-                  </ng-template>
-                  <ng-template #monthRevenueRupee>
-                    <td class="dasbhoard-amount">
-                      <span style="font-size: 0.9vw;">&ensp;&#8377;</span>{{revenueObj.revenueAmount/100 | currency: '':''}}
-                    </td>
-                  </ng-template>
-                  <ng-template #noCurrencyMonthRevenue>
-                    <td class="dasbhoard-amount">&ensp;{{revenueObj.revenueAmount/100 | currency: '':''}}</td>
-                  </ng-template>
-                  <ng-template #monthCmiDollar>
-                    <td class="dasbhoard-amount">
-                      <span style="font-size: 0.9vw;">&ensp;$</span>{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}
-                    </td>
-                  </ng-template>
-                  <ng-template #monthCmiRupeeCheck>
-                    <ng-container *ngIf="projectBillingCurrency == 'INR'; then monthCmiRupee; else noCurrencyMonthCmi"></ng-container>
-                  </ng-template>
-                  <ng-template #monthCmiRupee>
-                    <td class="dasbhoard-amount">
-                      <span style="font-size: 0.9vw;">&ensp;&#8377;</span>{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}
-                    </td>
-                  </ng-template>
-                  <ng-template #noCurrencyMonthCmi>
-                    <td class="dasbhoard-amount">&ensp;{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}</td>
-                  </ng-template>
-                </ng-container>
-              </div>
-              <div class="flex-row" fxlayout="row" style="width: 98%;">
-                <ng-container *ngFor="let revenueObj of dashboardRevenue; let revObjIdx = index;">
-                  <ng-container *ngIf="revObjIdx >= 6 && revObjIdx <= 11;">
-                    <div class="ordMonth" fxflex="" fxflexorder="-1" (click)="dashboardMonthDetailView(revObjIdx, revenueYear)">
-                      <h5 class="rev-month-hfive">{{revenueObj.revenueMonth | date: 'MMMM - yyyy'}}</h5>
-                      <tbody>
-                        <tr style="font-style: italic;">
-                          <td style="text-align: right; font-size: 1vw;">Revenue&thinsp;:</td>
-                          <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
-                        </tr>
-                        <tr style="font-style: italic;">
-                          <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
-                          <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
-                        </tr>
-                      </tbody>
-                      <p></p>
-                    </div>
-                  </ng-container>
-                  <ng-template #monthRevenueDollar>
-                    <td class="dasbhoard-amount">
-                      <span style="font-size: 0.9vw;">&ensp;$</span>{{revenueObj.revenueAmount/100 | currency: '':''}}
-                    </td>
-                  </ng-template>
-                  <ng-template #monthRevenueRupeeCheck>
-                    <ng-container *ngIf="projectBillingCurrency == 'INR'; then monthRevenueRupee; else noCurrencyMonthRevenue"></ng-container>
-                  </ng-template>
-                  <ng-template #monthRevenueRupee>
-                    <td class="dasbhoard-amount">
-                      <span style="font-size: 0.9vw;">&ensp;&#8377;</span>{{revenueObj.revenueAmount/100 | currency: '':''}}
-                    </td>
-                  </ng-template>
-                  <ng-template #noCurrencyMonthRevenue>
-                    <td class="dasbhoard-amount">&ensp;{{revenueObj.revenueAmount/100 | currency: '':''}}</td>
-                  </ng-template>
-                  <ng-template #monthCmiDollar>
-                    <td class="dasbhoard-amount">
-                      <span style="font-size: 0.9vw;">&ensp;$</span>{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}
-                    </td>
-                  </ng-template>
-                  <ng-template #monthCmiRupeeCheck>
-                    <ng-container *ngIf="projectBillingCurrency == 'INR'; then monthCmiRupee; else noCurrencyMonthCmi"></ng-container>
-                  </ng-template>
-                  <ng-template #monthCmiRupee>
-                    <td class="dasbhoard-amount"> <span style="font-size: 0.9vw;">&ensp;&#8377;</span>{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}</td>
-                  </ng-template>
-                  <ng-template #noCurrencyMonthCmi>
-                    <td class="dasbhoard-amount">&ensp;{{revenueObj.cmiRevenueAmount/100 | currency: '':''}}</td>
-                  </ng-template>
-                </ng-container>
-              </div>
-            </ng-template>
-            <ng-template #noDashboardRevenue>
-              <div class="project-name">No revenue available for {{revenueYear}} !</div>
-            </ng-template>
-          </mat-tab>
-        </mat-tab-group>
-      </div>
-    </mat-sidenav-container>
+    </td>
   </div>
-</ng-template>
-<ng-template #employeeDashboard>
-  <div class="employee-detail-container">
-    <div style="float: left; width: 100%; padding-top: 10px; padding-bottom: 10px;">
-      <div style="display: table-cell; vertical-align: middle;">
-        <button mat-icon-button (click)="snav.toggle()" style="border: none; outline: none;">
-          <mat-icon style="font-size: 2vw;">menu</mat-icon>
-        </button>
-      </div>
-      <td class="esa-id" style="width: 43%;">{{empBaseDtl.esaId}}&ensp;&ndash;&ensp;{{empBaseDtl.esaDesc}}</td>
-      <td class="esa-id" style="width: 38%;">{{revenueYear}} Revenue</td>
-      <td class="esa-id" style="font-size: 1.3vw; width: 13%;">
-        <select style="font-style: italic; font-size: 1.2vw; border-radius: 3px; padding: 2px" (change)="getEmployeeRevenue($event.target.value, empBaseDtl._id)">
-          <option>&nbsp;Select Year&nbsp;</option>
-          <option *ngFor="let listYear of minMaxYear">{{listYear}}</option>
-        </select>
-      </td>
-      <td style="width: 40%;">
-        <div style="float: right; width: 100%">
-          <button mat-icon-button (click)="goToHome()" style="border: none; outline: none;">
-            <mat-icon style="font-size: 2vw; vertical-align: middle;">home</mat-icon>
-          </button>
-        </div>
-      </td>
-    </div>
 
-    <mat-sidenav-container class="revenue-sidenav-container">
-      <mat-sidenav #snav [mode]="'over'" fixedTopGap="80">
-        <mat-nav-list style="font-style: italic;">
-          <mat-accordion>
-            <mat-expansion-panel *ngFor="let projEmpObj of empList">
-              <mat-expansion-panel-header class="right-aligned-header">
-                <mat-panel-title style="font-size: 1vw;">{{projEmpObj.esaDesc}}</mat-panel-title>
-                <mat-panel-description style="font-size: 1vw;">(&thinsp;{{projEmpObj._id}}&thinsp;)</mat-panel-description>
-              </mat-expansion-panel-header>
-              <mat-divider></mat-divider>
-              <ng-container *ngIf="projEmpObj.workforce.length == 0; then revSideNavNoEmp; else revSideNavListEmp"></ng-container>
-              <ng-template #revSideNavNoEmp>
-                <mat-list-item style="font-style: italic;">No employees allocated for {{revenueYear}}</mat-list-item>
-              </ng-template>
-              <ng-template #revSideNavListEmp>
-                <ng-container *ngFor="let empObj of projEmpObj.workforce; let lastVal = last">
-                  <mat-list-item (click)="getEmployeeRevenue(revenueYear, empObj.employeeLinker)" style="font-style: italic;">
-                    {{empObj.empLname}},&ensp;{{empObj.empFname}}
-                    <mat-divider *ngIf="!lastVal"></mat-divider>
-                  </mat-list-item>
-                </ng-container>
-              </ng-template>
-            </mat-expansion-panel>
-          </mat-accordion>
-        </mat-nav-list>
-      </mat-sidenav>
-      <p></p>
-      <div class="revenue-container">
-        <ng-container *ngIf="employeesAvailable == 0; then revContNoEmployee; else refreshEmpRevCheck"></ng-container>
-        <ng-template #revContNoEmployee>
-          <div class="project-name">No employees allocated for revenue year {{revenueYear}} !</div>
+  <mat-sidenav-container class="revenue-sidenav-container">
+    <mat-sidenav #snav [mode]="'over'" fixedTopGap="80">
+      <mat-nav-list style="font-style: italic;">
+        <mat-accordion>
+          <mat-expansion-panel *ngFor="let projEmpObj of empList">
+            <mat-expansion-panel-header class="right-aligned-header">
+              <mat-panel-title style="font-size: 1vw;">{{projEmpObj.esaDesc}}</mat-panel-title>
+              <mat-panel-description style="font-size: 1vw;">(&thinsp;{{projEmpObj._id}}&thinsp;)</mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-divider></mat-divider>
+            <ng-container *ngIf="projEmpObj.workforce.length == 0; then revSideNavNoEmp; else revSideNavListEmp"></ng-container>
+            <ng-template #revSideNavNoEmp>
+              <mat-list-item style="font-style: italic;">No employees allocated for {{revenueYear}}</mat-list-item>
+            </ng-template>
+            <ng-template #revSideNavListEmp>
+              <ng-container *ngFor="let empObj of projEmpObj.workforce; let lastVal = last">
+                <mat-list-item (click)="getEmployeeRevenue(revenueYear, empObj.employeeLinker)" style="font-style: italic;">
+                  {{empObj.empFname}},&ensp;{{empObj.empLname}}
+                  <mat-divider *ngIf="!lastVal"></mat-divider>
+                </mat-list-item>
+              </ng-container>
+            </ng-template>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </mat-nav-list>
+    </mat-sidenav>
+    <p></p>
+    <div class="revenue-container">
+      <ng-container *ngIf="employeesAvailable == 0; then revContNoEmployee; else refreshEmpRevCheck"></ng-container>
+      <ng-template #revContNoEmployee>
+        <div class="project-name">No employees allocated for revenue year {{revenueYear}} !</div>
+      </ng-template>
+      <ng-template #refreshEmpRevCheck>
+        <ng-container *ngIf="noRevForSelEmp == true; then noRevenueForEmployee; else refreshEmployeeRevenue;"></ng-container>
+        <ng-template #noRevenueForEmployee>
+          <div class="project-name">
+            <span>No revenue available for {{empBaseDtl.empFname}}, {{empBaseDtl.empLname}} in {{revenueYear}} !</span>
+          </div>
         </ng-template>
-        <ng-template #refreshEmpRevCheck>
-          <ng-container *ngIf="noRevForSelEmp == true; then noRevenueForEmployee; else refreshEmployeeRevenue;"></ng-container>
-          <ng-template #noRevenueForEmployee>
-            <div class="project-name">
-              <span>No revenue available for {{empBaseDtl.empLname}}, {{empBaseDtl.empFname}} in {{revenueYear}} !</span>
-            </div>
-          </ng-template>
-        </ng-template>
-      </div>
-    </mat-sidenav-container>
-  </div>
-</ng-template>
+      </ng-template>
+    </div>
+  </mat-sidenav-container>
+</div>
 <ng-template #refreshEmployeeRevenue>
   <ng-container *ngIf="!empBaseDtl.projName; then noProjName; else showProjName"></ng-container>
   <ng-template #noProjName>
@@ -243,7 +77,7 @@
   <ng-container *ngIf="!empBaseDtl.empMname; then noMname; else showMname"></ng-container>
   <ng-template #noMname>
     <tr>
-      <td style="font-size: 2.8vw;">{{empBaseDtl.empLname}},&thinsp;{{empBaseDtl.empFname}}&ensp;</td>
+      <td style="font-size: 2.8vw;">{{empBaseDtl.empFname}},&thinsp;{{empBaseDtl.empLname}}&ensp;</td>
       <td style="font-size: 1.7vw; vertical-align: middle; padding-top: 5px;">[&nbsp;{{empBaseDtl.ctsEmpId}}&nbsp;]
       </td>
     </tr>

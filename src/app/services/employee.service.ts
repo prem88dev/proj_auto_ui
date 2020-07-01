@@ -23,12 +23,7 @@ export class EmployeeService {
     return throwError(errorMessage);
   }
 
-  public listAllEmployees() {
-    const allEmpListUrl = "http://localhost:5454/workforce";
-    return this.httpClient.get(allEmpListUrl).pipe(catchError(this.handleError));
-  }
-
-  public listProjectEmployees(esaId?: string, revenueYear?: string) {
+  public getEmployee(esaId?: string, revenueYear?: string) {
     const employeeListUrl = "http://localhost:5454/workforce?esaId=" + esaId + "&revenueYear=" + revenueYear;
     return this.httpClient.get(employeeListUrl).pipe(catchError(this.handleError));
   }

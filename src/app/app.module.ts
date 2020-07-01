@@ -2,11 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
-import { ListAllProjectComponent } from './list-all-project/list-all-project.component';
-import { HttpClientModule } from '@angular/common/http';
-import { EditProjectComponent } from './edit-project/edit-project.component';
-import { AddProjectComponent } from './add-project/add-project.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatFormFieldModule } from '@angular/material';
 import { A11yModule } from '@angular/cdk/a11y';
@@ -52,15 +47,22 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
-import { DashboardDetailviewComponent } from './dashboard/dashboard-detailview/dashboard-detailview.component';
+import { ListAllProjectComponent } from './list-all-project/list-all-project.component';
+import { HttpClientModule } from '@angular/common/http';
+import { EditProjectComponent } from './edit-project/edit-project.component';
+import { AddProjectComponent } from './add-project/add-project.component';
+import { ProjectDashboardComponent } from './project-dashboard/project-dashboard.component';
+import { ProjDashMonthDetailComponent } from './project-dashboard/proj-dash-month-detail/proj-dash-month-detail.component';
+import { EmployeeDashboardComponent } from './employee-dashboard/employee-dashboard.component';
+import { EmpDashMonthDetailComponent } from './employee-dashboard/emp-dash-month-detail/emp-dash-month-detail.component';
 
 const paths: Routes = [
-  { path: 'home', component: DashboardComponent },
+  { path: 'dashboard/:revenueYear/:projectId', component: ProjectDashboardComponent },
   { path: 'projectList', component: ListAllProjectComponent },
   { path: 'addProject', component: AddProjectComponent },
-  { path: '**', component: DashboardComponent }
+  { path: 'employeeRevenue/:revenueYear/:employeeFilter', component: EmployeeDashboardComponent },
+  { path: '**', component: ProjectDashboardComponent }
 ];
-
 
 @NgModule({
   declarations: [
@@ -68,8 +70,10 @@ const paths: Routes = [
     ListAllProjectComponent,
     EditProjectComponent,
     AddProjectComponent,
-    DashboardComponent,
-    DashboardDetailviewComponent
+    ProjectDashboardComponent,
+    ProjDashMonthDetailComponent,
+    EmployeeDashboardComponent,
+    EmpDashMonthDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -124,7 +128,7 @@ const paths: Routes = [
   ],
   providers: [
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },
-    DashboardDetailviewComponent
+    ProjDashMonthDetailComponent
   ],
   bootstrap: [AppComponent],
   entryComponents: []

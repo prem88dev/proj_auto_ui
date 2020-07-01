@@ -1,0 +1,32 @@
+<h2 mat-dialog-title style="font-style: italic; font-size: 1.5vw;">{{monthRevObj.revenueMonth | date: 'MMMM - yyyy'}}</h2>
+<mat-dialog-content>
+    <tbody style="font-style: italic; font-size: 1.1vw;">
+        <tr style="height: 2vw; vertical-align: middle;">
+            <td style="text-align: center; width: 20vw">Associate</td>
+            <td style="text-align: right; width: 10vw;">Revenue</td>
+            <td style="text-align: right; width: 10vw">CMI Revenue</td>
+        </tr>
+    </tbody>
+</mat-dialog-content>
+<mat-dialog-content>
+    <tbody style="font-style: italic; font-size: 1.1vw;" *ngFor="let employee of empRevObj; let idx = index;">
+        <tr>
+            <td style="text-align: left; width: 20vw">{{employee.empFname}},&ensp;{{employee.empLname}}</td>
+            <td style="text-align: right; width: 10vw;">{{(employee.revenueAmount/100) | currency: revenueCurrency ? revenueCurrency : "'':''"}}</td>
+            <td style="text-align: right; width: 10vw">{{(employee.cmiRevenueAmount/100) | currency: revenueCurrency ? revenueCurrency : "'':''"}}</td>
+        </tr>
+    </tbody>
+</mat-dialog-content>
+<mat-dialog-content>
+    <tbody style="font-style: italic; text-align: right;">
+        <tr style="height: 3vw; vertical-align: middle;">
+            <td style="font-size: 1.1vw; width: 20vw;">Total</td>
+            <td style="font-size: 1.2vw; width: 10vw;">{{(monthRevObj.revenueAmount/100) | currency: revenueCurrency ? revenueCurrency : "'':''"}}</td>
+            <td style="font-size: 1.2vw; width: 10vw;">{{(monthRevObj.cmiRevenueAmount/100) | currency: revenueCurrency ? revenueCurrency : "'':''"}}</td>
+        </tr>
+    </tbody>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button class="mat-raised-button" (click)="close()" style="font-size: 1.3vw; font-style: italic; outline: none;">Close</button>
+</mat-dialog-actions>
+<br>
