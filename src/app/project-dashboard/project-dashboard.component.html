@@ -31,7 +31,7 @@
             </ng-template>
             <ng-template #dashSideNavListEmp>
               <ng-container *ngFor="let empObj of projEmpObj.workforce; let lastVal = last">
-                <mat-list-item (click)="navToEmployeeRevenue(revenueYear, empObj.employeeLinker)" style="font-style: italic;">
+                <mat-list-item (click)="navToEmployeeRevenue(revenueYear, empObj.employeeLinker)" style="font-style: italic; font-size: 1.1vw;">
                   {{empObj.empFname}},&ensp;{{empObj.empLname}}
                   <mat-divider *ngIf="!lastVal"></mat-divider>
                 </mat-list-item>
@@ -42,7 +42,7 @@
       </mat-nav-list>
     </mat-sidenav>
     <div class="mat-app-background basic-container" style="font-style: italic;">
-      <mat-tab-group mat-align-tabs="left" (selectedTabChange)="onProjectChange($event.index, revenueYear)">
+      <mat-tab-group mat-align-tabs="left" [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onProjectChange($event.index)">
         <mat-tab label="{{projEmpObj.esaDesc}}" *ngFor="let projEmpObj of empList">
           <br>
           <ng-container *ngIf="refreshDashboardRevenue == true; then refreshDashboard; else noDashboardRevenue"></ng-container>
