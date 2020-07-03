@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ProjectService } from '../services/project.service';
 import { EmployeeService } from '../services/employee.service'
 import { Subject } from 'rxjs';
@@ -16,34 +16,20 @@ import { ProjDashMonthDetailComponent } from './proj-dash-month-detail/proj-dash
 
 export class ProjectDashboardComponent implements OnInit {
 
+  private dashboardYearHttpParam: string = "";
+  private projectIdHttpParam: string = "";
   private dashboardRevenue = [];
-  private projectWorkforce = [];
   private empList = [];
-  private employeesAvailable = 0;
-  private columns = [];
   private minMaxYear = [];
-  private showEmployee: Boolean = false;
-  private empObj = [];
-  private empBaseDtl = [];
-  private empLeave: string = "";
-  private locHoliday: string = "";
-  private empSplWrk: string = "";
-  private locSplWrk: string = "";
-  private buffer: string = "";
-  private revenue = [];
-  private sowStart: string = "";
-  private sowStop: string = "";
-  private sowForeCast: string = "";
-  private totalRevenue: number = 0;
-  private totalCmiRevenue: number = 0;
   private revenueYear: string = "";
   private currentYear = new Date().getFullYear();
-  private selProjectObj = [];
   private selectedProject: string = "";
-  private noRevForSelEmp = false;
   private projectBillingCurrency = "";
   private refreshDashboardRevenue: Boolean = false;
   private dashboardDump = [];
+  private selectedTabIndex: number = 0;
+  private moveToTab: number = 0;
+  private goToTab: Boolean = true;
 
   private destroy$: Subject<Boolean> = new Subject<Boolean>();
 
@@ -52,7 +38,8 @@ export class ProjectDashboardComponent implements OnInit {
     private employeeService: EmployeeService,
     private router: Router,
     private matDialog: MatDialog,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private change: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -73,23 +60,36 @@ export class ProjectDashboardComponent implements OnInit {
       }
     });
 
-    let dashboardYearHttpParam = this.route.snapshot.paramMap.get('revenueYear');
-    let projectIdHttpParam = this.route.snapshot.paramMap.get('projectId');
-    if (dashboardYearHttpParam === undefined || dashboardYearHttpParam === null || dashboardYearHttpParam.length !== 4) {
+    this.employeeService.getEmployee("", this.revenueYear).pipe(takeUntil(this.destroy$)).subscribe((projEmpList: any[]) => {
+      this.empList = projEmpList;
+    });
+
+    this.dashboardYearHttpParam = this.route.snapshot.paramMap.get('revenueYear');
+    this.projectIdHttpParam = this.route.snapshot.paramMap.get('projectId');
+    if (this.dashboardYearHttpParam === undefined || this.dashboardYearHttpParam === null || this.dashboardYearHttpParam.length !== 4) {
       this.revenueYear = this.currentYear.toString();
     } else {
-      this.revenueYear = dashboardYearHttpParam;
+      this.revenueYear = this.dashboardYearHttpParam;
     }
 
-    if (projectIdHttpParam === undefined || projectIdHttpParam === null || projectIdHttpParam === "") {
-      this.projectService.projectList().pipe(takeUntil(this.destroy$)).subscribe((projectListDump: any[]) => {
-        this.selectedProject = projectListDump[0]._id;
-      });
-    } else {
-      this.selectedProject = projectIdHttpParam;
-    }
-    this.router.navigate(['/dashboard', this.revenueYear, this.selectedProject]);
-    this.refreshPage();
+    let projectList = [];
+    this.projectService.projectList().pipe(takeUntil(this.destroy$)).subscribe((projectListDump: any[]) => {
+      projectList = projectListDump;
+
+      if (this.projectIdHttpParam !== undefined && this.projectIdHttpParam !== null && this.projectIdHttpParam !== "") {
+        this.selectedProject = this.projectIdHttpParam;
+        projectList.forEach((project, idx) => {
+          if (this.selectedProject === project._id.toString()) {
+            this.moveToTab = idx;
+          }
+        });
+      } else {
+        this.selectedProject = projectList[0]._id.toString();
+        this.moveToTab = 0;
+      }
+      this.router.navigate(['/dashboard', this.revenueYear, this.selectedProject]);
+    });
+
   }
 
   public navToEmployeeRevenue(selectedYear: string, selectedEmployee: string) {
@@ -97,11 +97,7 @@ export class ProjectDashboardComponent implements OnInit {
     this.router.navigate(['/employeeRevenue', selectedYear, selectedEmployee]);
   }
 
-  public refreshPage() {
-    this.employeeService.getEmployee("", this.revenueYear).pipe(takeUntil(this.destroy$)).subscribe((projEmpList: any[]) => {
-      this.empList = projEmpList;
-      this.employeesAvailable = this.empList.length;
-    });
+  public buildDashboardRevenue(): void {
     this.projectService.projectRevenue(this.selectedProject, this.revenueYear).pipe(takeUntil(this.destroy$)).subscribe((projectRevenueDump: any[]) => {
       if (projectRevenueDump.length >= 1) {
         this.dashboardDump = projectRevenueDump;
@@ -111,23 +107,39 @@ export class ProjectDashboardComponent implements OnInit {
       } else {
         this.refreshDashboardRevenue = false;
       }
+
+      this.employeeService.getEmployee("", this.revenueYear).pipe(takeUntil(this.destroy$)).subscribe((projEmpList: any[]) => {
+        this.empList = projEmpList;
+      });
+  
+      this.router.navigate(['/dashboard', this.revenueYear, this.selectedProject]);
+
+      if (this.goToTab === true) {
+        this.goToTab = false;
+        window.setTimeout(() => {
+          console.log("moving to tab: " + this.moveToTab);
+          this.selectedTabIndex = this.moveToTab;
+          this.change.markForCheck();
+        });
+      }
     });
-    this.router.navigate(['/dashboard', this.revenueYear, this.selectedProject]);
+
   }
 
-  public onRevenueYearChange(forYear: string, forProject: string) {
-    this.revenueYear = forYear;
-    this.selectedProject = forProject;
-    this.refreshPage();
-  }
-
-  public onProjectChange(selectedTab: number, forYear: string) {
-    if (forYear !== "" || forYear.trim() !== "Select Year") {
+  public onRevenueYearChange(forYear: string) {
+    if (forYear.trim() !== "Select Year") {
       this.revenueYear = forYear;
+    } else if (forYear.trim() === "Select Year") {
+      this.revenueYear = this.currentYear.toString();
     }
-    this.selProjectObj = this.empList[selectedTab];
-    this.selectedProject = this.selProjectObj["_id"].toString();
-    this.refreshPage();
+
+    this.buildDashboardRevenue();
+  }
+
+  public onProjectChange(selectedTab: number) {
+    this.selectedProject = this.empList[selectedTab]["_id"].toString();
+    this.selectedTabIndex = selectedTab;
+    this.buildDashboardRevenue();
   }
 
   public dashboardMonthDetailView(monthIndex: string) {
