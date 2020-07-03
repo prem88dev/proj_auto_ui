@@ -51,7 +51,7 @@
     </mat-sidenav>
     <p></p>
     <div class="revenue-container">
-      <ng-container *ngIf="employeesAvailable == 0; then revContNoEmployee; else refreshEmpRevCheck"></ng-container>
+      <ng-container *ngIf="availableEmployees == 0; then revContNoEmployee; else refreshEmpRevCheck"></ng-container>
       <ng-template #revContNoEmployee>
         <div class="project-name">No employees allocated for revenue year {{revenueYear}} !</div>
       </ng-template>
