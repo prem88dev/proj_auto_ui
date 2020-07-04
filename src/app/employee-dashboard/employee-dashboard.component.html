@@ -6,17 +6,23 @@
         <mat-icon style="font-size: 2vw;">menu</mat-icon>
       </button>
     </div>
-    <td class="esa-id" style="width: 43%;">{{empBaseDtl.esaId}}&ensp;&ndash;&ensp;{{empBaseDtl.esaDesc}}</td>
+    <ng-container *ngIf="filterOk === true; then dispProjDesc; else dispEmptyDesc;"></ng-container>
+    <ng-template #dispProjDesc>
+      <td class="esa-id" style="width: 43%;">{{empBaseDtl.esaId}}&ensp;&ndash;&ensp;{{empBaseDtl.esaDesc}}</td>
+    </ng-template>
+    <ng-template #dispEmptyDesc>
+      <td class="esa-id" style="width: 43%;"></td>
+    </ng-template>
     <td class="esa-id" style="width: 38%;">{{revenueYear}} Revenue</td>
     <td class="esa-id" style="font-size: 1.3vw; width: 13%;">
-      <select style="font-style: italic; font-size: 1.2vw; border-radius: 3px; padding: 2px" (change)="getEmployeeRevenue($event.target.value, empBaseDtl._id)">
+      <select style="font-style: italic; font-size: 1.2vw; border-radius: 3px; padding: 2px" (change)="getEmployeeRevenue($event.target.value, employeeFilter)">
         <option>&nbsp;Select Year&nbsp;</option>
         <option *ngFor="let listYear of minMaxYear">{{listYear}}</option>
       </select>
     </td>
     <td style="width: 40%;">
       <div style="float: right; width: 100%">
-        <button mat-icon-button (click)="goToHome()" style="border: none; outline: none;">
+        <button mat-icon-button (click)="goToProjectDashboard()" style="border: none; outline: none;">
           <mat-icon style="font-size: 2vw; vertical-align: middle;">home</mat-icon>
         </button>
       </div>
@@ -51,17 +57,15 @@
     </mat-sidenav>
     <p></p>
     <div class="revenue-container">
-      <ng-container *ngIf="availableEmployees == 0; then revContNoEmployee; else refreshEmpRevCheck"></ng-container>
-      <ng-template #revContNoEmployee>
-        <div class="project-name">No employees allocated for revenue year {{revenueYear}} !</div>
+      <ng-container *ngIf="filterOk === true; then checkRevenueAvailable; else badFilter;"></ng-container>
+      <ng-template #badFilter>
+        <div class="project-name">No data available !</div>
       </ng-template>
-      <ng-template #refreshEmpRevCheck>
-        <ng-container *ngIf="noRevForSelEmp == true; then noRevenueForEmployee; else refreshEmployeeRevenue;"></ng-container>
-        <ng-template #noRevenueForEmployee>
-          <div class="project-name">
-            <span>No revenue available for {{empBaseDtl.empFname}}, {{empBaseDtl.empLname}} in {{revenueYear}} !</span>
-          </div>
-        </ng-template>
+      <ng-template #checkRevenueAvailable>
+        <ng-container *ngIf="revenueAvailable === true; then refreshEmployeeRevenue; else noRevenueForEmployee;"></ng-container>
+      </ng-template>
+      <ng-template #noRevenueForEmployee>
+        <div class="project-name">No revenue available for {{empBaseDtl.empFname}}, {{empBaseDtl.empLname}} in {{revenueYear}} !</div>
       </ng-template>
     </div>
   </mat-sidenav-container>
@@ -114,14 +118,14 @@
         </div>
         <div style="float: left; width: 25%">
           <td style="font-weight: lighter;">Billing rate&thinsp;:&nbsp;&nbsp;</td>
-          <ng-container *ngIf="projectBillingCurrency == 'USD'; then billRateDollar; else rupeeCheck"></ng-container>
+          <ng-container *ngIf="employeeBillingCurrency == 'USD'; then billRateDollar; else rupeeCheck"></ng-container>
           <ng-template #billRateDollar>
             <td style="font-size: 1.5vw">
               <span style="font-size: 1.1vw;">$</span>{{empBaseDtl.billRatePerHr/100 | currency: '':''}}
             </td>
           </ng-template>
           <ng-template #rupeeCheck>
-            <ng-container *ngIf="projectBillingCurrency == 'INR'; then billRateRupee; else noCurrencyBillRate"></ng-container>
+            <ng-container *ngIf="employeeBillingCurrency == 'INR'; then billRateRupee; else noCurrencyBillRate"></ng-container>
           </ng-template>
           <ng-template #billRateRupee>
             <td style="font-size: 1.5vw">{{empBaseDtl.billRatePerHr/100 | currency: '&#8377;'}}</td>
@@ -169,7 +173,7 @@
     </div>
     <div style="float: left; width: 40%;">
       <div style="display: table-row;">
-        <ng-container *ngIf="projectBillingCurrency == 'USD'; then totalRevenueDollar; else totalRevenueRupeeCheck"></ng-container>
+        <ng-container *ngIf="employeeBillingCurrency == 'USD'; then totalRevenueDollar; else totalRevenueRupeeCheck"></ng-container>
         <ng-template #totalRevenueDollar>
           <td class="revenue-amount">Revenue&thinsp;:</td>
           <td class="cmi-revenue-amount">
@@ -177,7 +181,7 @@
           </td>
         </ng-template>
         <ng-template #totalRevenueRupeeCheck>
-          <ng-container *ngIf="projectBillingCurrency == 'INR'; then totalRupeeRevenue; else noCurrencyTotalRevenue"></ng-container>
+          <ng-container *ngIf="employeeBillingCurrency == 'INR'; then totalRupeeRevenue; else noCurrencyTotalRevenue"></ng-container>
         </ng-template>
         <ng-template #totalRupeeRevenue>
           <td class="revenue-amount">Revenue&thinsp;:</td>
@@ -191,7 +195,7 @@
         </ng-template>
       </div>
       <div style="display: table-row;">
-        <ng-container *ngIf="projectBillingCurrency == 'USD'; then totalCmiDollar; else totalCmiRupeeCheck"></ng-container>
+        <ng-container *ngIf="employeeBillingCurrency == 'USD'; then totalCmiDollar; else totalCmiRupeeCheck"></ng-container>
         <ng-template #totalCmiDollar>
           <td class="revenue-amount">CMI Revenue&thinsp;:</td>
           <td class="cmi-revenue-amount">
@@ -199,7 +203,7 @@
           </td>
         </ng-template>
         <ng-template #totalCmiRupeeCheck>
-          <ng-container *ngIf="projectBillingCurrency == 'INR'; then totalRupeeCmi; else noCurrencyBillRateTotalCmi"></ng-container>
+          <ng-container *ngIf="employeeBillingCurrency == 'INR'; then totalRupeeCmi; else noCurrencyBillRateTotalCmi"></ng-container>
         </ng-template>
         <ng-template #totalRupeeCmi>
           <td class="revenue-amount">CMI Revenue&thinsp;:</td>
@@ -238,11 +242,11 @@
           <tbody>
             <tr style="font-style: italic;">
               <td style="text-align: right; font-size: 1vw;">Revenue&thinsp;:</td>
-              <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
+              <ng-container *ngIf="employeeBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
             </tr>
             <tr style="font-style: italic;">
               <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
-              <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
+              <ng-container *ngIf="employeeBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
             </tr>
           </tbody>
           <div class="cardFooter">Beeline Start</div>
@@ -260,11 +264,11 @@
           <tbody>
             <tr style="font-style: italic;">
               <td style="text-align: right; font-size: 1vw">Revenue&thinsp;:</td>
-              <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
+              <ng-container *ngIf="employeeBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
             </tr>
             <tr style="font-style: italic;">
               <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
-              <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
+              <ng-container *ngIf="employeeBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
             </tr>
           </tbody>
           <div class="cardFooter">Beeline End</div>
@@ -276,11 +280,11 @@
           <tbody>
             <tr style="font-style: italic;">
               <td style="text-align: right; font-size: 1vw;">Revenue&thinsp;:</td>
-              <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
+              <ng-container *ngIf="employeeBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
             </tr>
             <tr style="font-style: italic;">
               <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
-              <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
+              <ng-container *ngIf="employeeBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
             </tr>
           </tbody>
           <div class="cardFooter">Forecasted Beeline End</div>
@@ -292,11 +296,11 @@
           <tbody>
             <tr style="font-style: italic;">
               <td style="text-align: right; font-size: 1vw;">Revenue&thinsp;:</td>
-              <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
+              <ng-container *ngIf="employeeBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
             </tr>
             <tr style="font-style: italic;">
               <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
-              <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
+              <ng-container *ngIf="employeeBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
             </tr>
           </tbody>
           <div class="cardFooter"></div>
@@ -308,7 +312,7 @@
         </td>
       </ng-template>
       <ng-template #monthRevenueRupeeCheck>
-        <ng-container *ngIf="projectBillingCurrency == 'INR'; then monthRevenueRupee; else noCurrencyMonthRevenue"></ng-container>
+        <ng-container *ngIf="employeeBillingCurrency == 'INR'; then monthRevenueRupee; else noCurrencyMonthRevenue"></ng-container>
       </ng-template>
       <ng-template #monthRevenueRupee>
         <td class="emp-month-amount"><span style="font-size: 0.9vw;">&ensp;&#8377;</span>{{revenueObj.revenueAmount/100 | currency: '':''}}</td>
@@ -322,7 +326,7 @@
         </td>
       </ng-template>
       <ng-template #monthCmiRupeeCheck>
-        <ng-container *ngIf="projectBillingCurrency == 'INR'; then monthCmiRupee; else noCurrencyMonthCmi">
+        <ng-container *ngIf="employeeBillingCurrency == 'INR'; then monthCmiRupee; else noCurrencyMonthCmi">
         </ng-container>
       </ng-template>
       <ng-template #monthCmiRupee>
@@ -357,11 +361,11 @@
           <tbody>
             <tr style="font-style: italic;">
               <td style="text-align: right; font-size: 1vw;">Revenue&thinsp;:</td>
-              <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
+              <ng-container *ngIf="employeeBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
             </tr>
             <tr style="font-style: italic;">
               <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
-              <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
+              <ng-container *ngIf="employeeBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
             </tr>
           </tbody>
           <div class="cardFooter">Beeline Start</div>
@@ -379,11 +383,11 @@
           <tbody>
             <tr style="font-style: italic;">
               <td style="text-align: right; font-size: 1vw">Revenue&thinsp;:</td>
-              <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
+              <ng-container *ngIf="employeeBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
             </tr>
             <tr style="font-style: italic;">
               <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
-              <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
+              <ng-container *ngIf="employeeBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
             </tr>
           </tbody>
           <div class="cardFooter">Beeline End</div>
@@ -395,11 +399,11 @@
           <tbody>
             <tr style="font-style: italic;">
               <td style="text-align: right; font-size: 1vw;">Revenue&thinsp;:</td>
-              <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
+              <ng-container *ngIf="employeeBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
             </tr>
             <tr style="font-style: italic;">
               <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
-              <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
+              <ng-container *ngIf="employeeBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
             </tr>
           </tbody>
           <div class="cardFooter">Forecasted Beeline End</div>
@@ -411,11 +415,11 @@
           <tbody>
             <tr style="font-style: italic;">
               <td style="text-align: right; font-size: 1vw;">Revenue&thinsp;:</td>
-              <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
+              <ng-container *ngIf="employeeBillingCurrency == 'USD'; then monthRevenueDollar; else monthRevenueRupeeCheck"></ng-container>
             </tr>
             <tr style="font-style: italic;">
               <td style="text-align: right; font-size: 1vw;">CMI Revenue&thinsp;:</td>
-              <ng-container *ngIf="projectBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
+              <ng-container *ngIf="employeeBillingCurrency == 'USD'; then monthCmiDollar; else monthCmiRupeeCheck"></ng-container>
             </tr>
           </tbody>
           <div class="cardFooter"></div>
@@ -427,7 +431,7 @@
         </td>
       </ng-template>
       <ng-template #monthRevenueRupeeCheck>
-        <ng-container *ngIf="projectBillingCurrency == 'INR'; then monthRevenueRupee; else noCurrencyMonthRevenue"></ng-container>
+        <ng-container *ngIf="employeeBillingCurrency == 'INR'; then monthRevenueRupee; else noCurrencyMonthRevenue"></ng-container>
       </ng-template>
       <ng-template #monthRevenueRupee>
         <td class="emp-month-amount">
@@ -443,7 +447,7 @@
         </td>
       </ng-template>
       <ng-template #monthCmiRupeeCheck>
-        <ng-container *ngIf="projectBillingCurrency == 'INR'; then monthCmiRupee; else noCurrencyMonthCmi"></ng-container>
+        <ng-container *ngIf="employeeBillingCurrency == 'INR'; then monthCmiRupee; else noCurrencyMonthCmi"></ng-container>
       </ng-template>
       <ng-template #monthCmiRupee>
         <td class="emp-month-amount">
