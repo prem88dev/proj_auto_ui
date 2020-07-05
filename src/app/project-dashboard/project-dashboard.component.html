@@ -32,7 +32,7 @@
             <ng-template #dashSideNavListEmp>
               <ng-container *ngFor="let empObj of projEmpObj.workforce; let lastVal = last">
                 <mat-list-item (click)="goToEmployeeRevenue(revenueYear, empObj.employeeLinker)" style="font-style: italic; font-size: 1.1vw;">
-                  {{empObj.empFname}},&ensp;{{empObj.empLname}}
+                  {{empObj.firstName}},&ensp;{{empObj.lastName}}
                   <mat-divider *ngIf="!lastVal"></mat-divider>
                 </mat-list-item>
               </ng-container>

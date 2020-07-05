@@ -12,16 +12,19 @@ export class ProjDashMonthDetailComponent {
   private empRevObj = [];
   private monthRevObj = [];
   private revenueCurrency = "";
+  private sowStart = "";
+  private sowStop = "";
+  private sowForeCast = "";
 
   constructor(
     private dialogRef: MatDialogRef<ProjDashMonthDetailComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public projectMonthData: any
   ) { }
 
   ngOnInit(): void {
-    this.empRevObj = this.data[0].employeeRevenue;
-    this.monthRevObj = this.data[0].monthTotal;
-    this.revenueCurrency = this.data[0].revenueCurrency;
+    this.empRevObj = this.projectMonthData[0].employeeRevenue;
+    this.monthRevObj = this.projectMonthData[0].monthTotal;
+    this.revenueCurrency = this.projectMonthData[0].revenueCurrency;
   }
 
   public close() {

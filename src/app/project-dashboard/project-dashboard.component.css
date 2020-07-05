@@ -1,12 +1,11 @@
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 
 .navbar-header {
-  width: 84%;
+  width: 60%;
   font-weight: lighter;
   font-style: italic;
   font-size: 1.6vw;
   text-align: center;
-  padding-left: 20vw;
 }
 
 .ordMonth {

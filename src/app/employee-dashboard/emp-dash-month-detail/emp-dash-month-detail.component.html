@@ -1,1 +1,9 @@
-<p>emp-dash-month-detail works!</p>
+<tr>
+   <td>
+      <h2 mat-dialog-title style="text-align: right; font-style: italic; font-size: 1.5vw; padding-right: 1vw;">{{monthData.monthName | date: 'MMMM - yyyy'}}</h2>
+   </td>
+   <td style="font-style: italic;" *ngIf="soStart === true;">( SO Start Month )</td>
+   <td style="font-style: italic;" *ngIf="soStop === true;">( SO End Month )</td>
+   <td style="font-style: italic;" *ngIf="soForecast === true;">( SO Forecast End Month )</td>
+   <td style="font-style: italic;" *ngIf="nonRev === true;">( Non-Revenue Month )</td>
+</tr>

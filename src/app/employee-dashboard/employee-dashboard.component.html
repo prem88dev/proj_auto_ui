@@ -8,14 +8,14 @@
     </div>
     <ng-container *ngIf="filterOk === true; then dispProjDesc; else dispEmptyDesc;"></ng-container>
     <ng-template #dispProjDesc>
-      <td class="esa-id" style="width: 43%;">{{empBaseDtl.esaId}}&ensp;&ndash;&ensp;{{empBaseDtl.esaDesc}}</td>
+      <td class="esa-id" style="width: 43%;">{{employeeDetail.esaId}}&ensp;&ndash;&ensp;{{employeeDetail.esaDesc}}</td>
     </ng-template>
     <ng-template #dispEmptyDesc>
       <td class="esa-id" style="width: 43%;"></td>
     </ng-template>
     <td class="esa-id" style="width: 38%;">{{revenueYear}} Revenue</td>
     <td class="esa-id" style="font-size: 1.3vw; width: 13%;">
-      <select style="font-style: italic; font-size: 1.2vw; border-radius: 3px; padding: 2px" (change)="getEmployeeRevenue($event.target.value, employeeFilter)">
+      <select class="year-dropdown" (change)="getEmployeeRevenue($event.target.value, employeeFilter)">
         <option>&nbsp;Select Year&nbsp;</option>
         <option *ngFor="let listYear of minMaxYear">{{listYear}}</option>
       </select>
@@ -46,7 +46,7 @@
             <ng-template #revSideNavListEmp>
               <ng-container *ngFor="let empObj of projEmpObj.workforce; let lastVal = last">
                 <mat-list-item (click)="getEmployeeRevenue(revenueYear, empObj.employeeLinker)" style="font-style: italic;">
-                  {{empObj.empFname}},&ensp;{{empObj.empLname}}
+                  {{empObj.firstName}},&ensp;{{empObj.lastName}}
                   <mat-divider *ngIf="!lastVal"></mat-divider>
                 </mat-list-item>
               </ng-container>
@@ -65,31 +65,31 @@
         <ng-container *ngIf="revenueAvailable === true; then refreshEmployeeRevenue; else noRevenueForEmployee;"></ng-container>
       </ng-template>
       <ng-template #noRevenueForEmployee>
-        <div class="project-name">No revenue available for {{empBaseDtl.empFname}}, {{empBaseDtl.empLname}} in {{revenueYear}} !</div>
+        <div class="project-name">No revenue available for {{employeeDetail.firstName}}, {{employeeDetail.lastName}} in {{revenueYear}} !</div>
       </ng-template>
     </div>
   </mat-sidenav-container>
 </div>
 <ng-template #refreshEmployeeRevenue>
-  <ng-container *ngIf="!empBaseDtl.projName; then noProjName; else showProjName"></ng-container>
+  <ng-container *ngIf="!employeeDetail.projName; then noProjName; else showProjName"></ng-container>
   <ng-template #noProjName>
     <div class="project-name">[ No project Name ]</div>
   </ng-template>
   <ng-template #showProjName>
-    <div class="project-name">{{empBaseDtl.projName}}</div>
+    <div class="project-name">{{employeeDetail.projName}}</div>
   </ng-template>
-  <ng-container *ngIf="!empBaseDtl.empMname; then noMname; else showMname"></ng-container>
+  <ng-container *ngIf="!employeeDetail.middleName; then noMname; else showMname"></ng-container>
   <ng-template #noMname>
     <tr>
-      <td style="font-size: 2.8vw;">{{empBaseDtl.empFname}},&thinsp;{{empBaseDtl.empLname}}&ensp;</td>
-      <td style="font-size: 1.7vw; vertical-align: middle; padding-top: 5px;">[&nbsp;{{empBaseDtl.ctsEmpId}}&nbsp;]
+      <td style="font-size: 2.8vw;">{{employeeDetail.firstName}},&thinsp;{{employeeDetail.lastName}}&ensp;</td>
+      <td style="font-size: 1.7vw; vertical-align: middle; padding-top: 5px;">[&nbsp;{{employeeDetail.ctsEmpId}}&nbsp;]
       </td>
     </tr>
   </ng-template>
   <ng-template #showMname>
     <tr>
-      <td style="font-size: 2.8vw;">{{empBaseDtl.empLname}} {{empBaseDtl.empMname}} {{empBaseDtl.empLname}}</td>
-      <td style="font-size: 1.7vw; vertical-align: top; padding-top: 12px;">[&nbsp;{{empBaseDtl.ctsEmpId}}&nbsp;]
+      <td style="font-size: 2.8vw;">{{employeeDetail.lastName}} {{employeeDetail.middleName}} {{employeeDetail.lastName}}</td>
+      <td style="font-size: 1.7vw; vertical-align: top; padding-top: 12px;">[&nbsp;{{employeeDetail.ctsEmpId}}&nbsp;]
       </td>
     </tr>
   </ng-template>
@@ -97,13 +97,13 @@
     <div style="float: left; width: 70%;">
       <tr>
         <td style="font-weight: lighter;">Allocation spans between</td>
-        <td style="font-size: 1.5vw">&ensp;{{empBaseDtl.sowStart | date: 'd MMM, yyyy'}}</td>
+        <td style="font-size: 1.5vw">&ensp;{{employeeDetail.sowStart | date: 'd MMM, yyyy'}}</td>
         <td style="font-weight: lighter;">&ensp;and&ensp;</td>
-        <td style="font-size: 1.5vw">{{empBaseDtl.sowStop | date: 'd MMM, yyyy'}}</td>
-        <ng-container *ngIf="empBaseDtl.foreseenSowStop; then showForeSeen;"></ng-container>
+        <td style="font-size: 1.5vw">{{employeeDetail.sowStop | date: 'd MMM, yyyy'}}</td>
+        <ng-container *ngIf="employeeDetail.forecastSowStop; then showForeSeen;"></ng-container>
         <ng-template #showForeSeen>
           <td style="font-weight: lighter;">&ensp;with a foreseeable extension upto&ensp;</td>
-          <td style="font-size: 1.5vw">{{empBaseDtl.foreseenSowStop | date: 'd MMM, yyyy'}}</td>
+          <td style="font-size: 1.5vw">{{employeeDetail.forecastSowStop | date: 'd MMM, yyyy'}}</td>
         </ng-template>
       </tr>
     </div>
@@ -114,60 +114,60 @@
       <div style="width: 100%; overflow: hidden;">
         <div style="float: left; width: 23%;">
           <td style="font-weight: lighter;">Working hours&thinsp;:&nbsp;&nbsp;</td>
-          <td style="font-size: 1.6vw">{{empBaseDtl.wrkHrPerDay}}</td>
+          <td style="font-size: 1.6vw">{{employeeDetail.workHourPerDay}}</td>
         </div>
         <div style="float: left; width: 25%">
           <td style="font-weight: lighter;">Billing rate&thinsp;:&nbsp;&nbsp;</td>
           <ng-container *ngIf="employeeBillingCurrency == 'USD'; then billRateDollar; else rupeeCheck"></ng-container>
           <ng-template #billRateDollar>
             <td style="font-size: 1.5vw">
-              <span style="font-size: 1.1vw;">$</span>{{empBaseDtl.billRatePerHr/100 | currency: '':''}}
+              <span style="font-size: 1.1vw;">$</span>{{employeeDetail.billRatePerHour/100 | currency: '':''}}
             </td>
           </ng-template>
           <ng-template #rupeeCheck>
             <ng-container *ngIf="employeeBillingCurrency == 'INR'; then billRateRupee; else noCurrencyBillRate"></ng-container>
           </ng-template>
           <ng-template #billRateRupee>
-            <td style="font-size: 1.5vw">{{empBaseDtl.billRatePerHr/100 | currency: '&#8377;'}}</td>
+            <td style="font-size: 1.5vw">{{employeeDetail.billRatePerHour/100 | currency: '&#8377;'}}</td>
           </ng-template>
           <ng-template #noCurrencyBillRate>
-            <td style="font-size: 1.5vw">{{empBaseDtl.billRatePerHr/100}}</td>
+            <td style="font-size: 1.5vw">{{employeeDetail.billRatePerHour/100}}</td>
           </ng-template>
         </div>
         <div style="float: left; width: 40%">
           <td style="font-weight: lighter;">Location&thinsp;:&nbsp;&nbsp;</td>
-          <td style="font-size: 1.5vw">{{empBaseDtl.cityName}}&ensp;</td>
-          <td>(&thinsp;{{empBaseDtl.siteInd}}&thinsp;)</td>
+          <td style="font-size: 1.5vw">{{employeeDetail.cityName}}&ensp;</td>
+          <td>(&thinsp;{{employeeDetail.siteInd}}&thinsp;)</td>
         </div>
       </div>
       <div style="width: 100%; overflow: hidden;">
         <div style="float: left; width: 30%">
           <td style="font-weight: lighter;">Lowes UID&thinsp;:&nbsp;&nbsp;</td>
-          <ng-container *ngIf="empBaseDtl.lowesUid; then showLowesUid; else noData"></ng-container>
+          <ng-container *ngIf="employeeDetail.lowesUid; then showLowesUid; else noData"></ng-container>
           <ng-template #showLowesUid>
-            <td style="font-size: 1.5vw">{{empBaseDtl.lowesUid}}</td>
+            <td style="font-size: 1.5vw">{{employeeDetail.lowesUid}}</td>
           </ng-template>
         </div>
         <div style="float: left; width: 28%">
           <td style="font-weight: lighter;">Unix ID&thinsp;:&nbsp;&nbsp;</td>
-          <ng-container *ngIf="empBaseDtl.unixId; then showUnixId; else noData"></ng-container>
+          <ng-container *ngIf="employeeDetail.unixId; then showUnixId; else noData"></ng-container>
           <ng-template #showUnixId>
-            <td style="font-size: 1.5vw">{{empBaseDtl.unixId}}</td>
+            <td style="font-size: 1.5vw">{{employeeDetail.unixId}}</td>
           </ng-template>
         </div>
         <div style="float: left; width: 28%">
           <td style="font-weight: lighter;">Windows ID&thinsp;:&nbsp;&nbsp;</td>
-          <ng-container *ngIf="empBaseDtl.winId; then showWindowsId; else noData"></ng-container>
+          <ng-container *ngIf="employeeDetail.winId; then showWindowsId; else noData"></ng-container>
           <ng-template #showWindowsId>
-            <td style="font-size: 1.5vw">{{empBaseDtl.windowsId}}</td>
+            <td style="font-size: 1.5vw">{{employeeDetail.windowsId}}</td>
           </ng-template>
         </div>
       </div>
       <div style="float: left; width: 100%">
         <td style="font-weight: lighter;">Department&thinsp;:&nbsp;&nbsp;</td>
-        <ng-container *ngIf="empBaseDtl.deptName; then showDept; else noData"></ng-container>
+        <ng-container *ngIf="employeeDetail.deptName; then showDept; else noData"></ng-container>
         <ng-template #showDept>
-          <td style="font-size: 1.5vw">{{empBaseDtl.deptName}}</td>
+          <td style="font-size: 1.5vw">{{employeeDetail.deptName}}</td>
         </ng-template>
       </div>
     </div>

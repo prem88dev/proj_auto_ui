@@ -27,6 +27,7 @@ export class ProjectDashboardComponent implements OnInit {
   private projectBillingCurrency: string = "";
   private refreshDashboardRevenue: Boolean = false;
   private dashboardDump = [];
+  private projDesc: string = "";
   private selectedTabIndex: number = 0;
   private moveToTab: number = 0;
   private goToTab: Boolean = true;
@@ -97,20 +98,21 @@ export class ProjectDashboardComponent implements OnInit {
   }
 
   public buildDashboardRevenue(): void {
+    this.router.navigate(['/dashboard', this.revenueYear, this.selectedProject]);
+    this.employeeService.getEmployee("", this.revenueYear).pipe(takeUntil(this.destroy$)).subscribe((projEmpList: any[]) => {
+      this.empList = projEmpList;
+    });
+    
     this.projectService.projectRevenue(this.selectedProject, this.revenueYear).pipe(takeUntil(this.destroy$)).subscribe((projectRevenueDump: any[]) => {
-      this.router.navigate(['/dashboard', this.revenueYear, this.selectedProject]);
       if (projectRevenueDump.length >= 1) {
         this.dashboardDump = projectRevenueDump;
         this.dashboardRevenue = projectRevenueDump[projectRevenueDump.length - 1].projectRevenue;
         this.projectBillingCurrency = projectRevenueDump[projectRevenueDump.length - 1].currency;
+        this.projDesc = projectRevenueDump[0][0].esaDesc;
         this.refreshDashboardRevenue = true;
       } else {
         this.refreshDashboardRevenue = false;
       }
-
-      this.employeeService.getEmployee("", this.revenueYear).pipe(takeUntil(this.destroy$)).subscribe((projEmpList: any[]) => {
-        this.empList = projEmpList;
-      });
 
       if (this.goToTab === true) {
         this.goToTab = false;
@@ -128,7 +130,6 @@ export class ProjectDashboardComponent implements OnInit {
     } else if (forYear.trim() === "Select Year") {
       this.revenueYear = this.currentYear.toString();
     }
-
     this.buildDashboardRevenue();
   }
 
@@ -139,20 +140,19 @@ export class ProjectDashboardComponent implements OnInit {
   }
 
   public dashboardMonthDetailView(monthIndex: string) {
-    let dashboardMonthData = [];
+    let projectMonthData = [];
     let monthTotal = this.dashboardDump[this.dashboardDump.length - 1].projectRevenue[monthIndex];
     let revenueCurrency = this.dashboardDump[this.dashboardDump.length - 1].currency;
     let revenueObj = [];
-    this.dashboardDump.forEach((empObj, idx) => {
+    this.dashboardDump.forEach((employee, idx) => {
       if (idx < (this.dashboardDump.length - 1)) {
-        let empDtl = empObj[0];
-        let empMonthRev = empObj[5]["revenue"][monthIndex];
-        revenueObj.push({ "empFname": empDtl.empFname, "empLname": empDtl.empLname, "revenueAmount": empMonthRev.revenueAmount, "cmiRevenueAmount": empMonthRev.cmiRevenueAmount });
+        let revenue = employee[1].monthlyDetail[monthIndex].revenue;
+        revenueObj.push({ "firstName": employee[0].firstName, "lastName": employee[0].lastName, "sowStart": employee[0].sowStart, "sowStop": employee[0].sowStop, "sowForeCast": employee[0].forecastSowStop, "revenueAmount": revenue.revenueAmount, "cmiRevenueAmount": revenue.cmiRevenueAmount });
       }
     });
-    dashboardMonthData.push({ "employeeRevenue": revenueObj, "monthTotal": monthTotal, "revenueCurrency": revenueCurrency });
+    projectMonthData.push({ "employeeRevenue": revenueObj, "monthTotal": monthTotal, "revenueCurrency": revenueCurrency });
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.data = dashboardMonthData;
+    dialogConfig.data = projectMonthData;
     this.matDialog.open(ProjDashMonthDetailComponent, dialogConfig);
   }
 

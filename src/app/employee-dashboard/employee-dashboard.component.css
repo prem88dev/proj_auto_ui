@@ -193,6 +193,7 @@
   bottom: 0px;
   left: 0px;
   right: 0px;
+  user-select: none;
 }
 
 .revenue-sidenav-container {
@@ -213,4 +214,11 @@
   text-shadow: 1px 1px 1px yellowgreen;
   font-weight: lighter;
   padding-left: 10px;
+}
+
+.year-dropdown {
+  font-style: italic;
+  font-size: 1.2vw;
+  border-radius: 3px;
+  padding: 2px;
 }

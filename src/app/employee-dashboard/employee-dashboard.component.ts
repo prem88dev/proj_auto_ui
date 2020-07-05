@@ -23,8 +23,9 @@ export class EmployeeDashboardComponent implements OnInit {
   private empList = [];
   private destroy$: Subject<Boolean> = new Subject<Boolean>();
   private availableEmployees: number = 0;
-  private empObj = [];
-  private empBaseDtl = [];
+  private employee = [];
+  private employeeDetail = [];
+  private employeeMonthlyDetail = [];
   private empLeave = [];
   private locHoliday = [];
   private empSplWrk = [];
@@ -111,8 +112,8 @@ export class EmployeeDashboardComponent implements OnInit {
     this.revenueYear = ""
     this.empList = [];
     this.availableEmployees = 0;
-    this.empObj = [];
-    this.empBaseDtl = [];
+    this.employee = [];
+    this.employeeDetail = [];
     this.empLeave = [];
     this.locHoliday = [];
     this.empSplWrk = [];
@@ -142,73 +143,71 @@ export class EmployeeDashboardComponent implements OnInit {
             this.projectFound = true;
             this.availableEmployees = project.workforce.length;
             let projectWorkforce = project.workforce;
-            projectWorkforce.forEach((empObj) => {
-              if (empObj.employeeLinker.toString() === this.employeeFilter.toString()) {
+            projectWorkforce.forEach((employee) => {
+              if (employee.employeeLinker === this.employeeFilter) {
                 this.filterOk = true;
               }
             });
           }
         });
-
-        if (this.filterOk === true) {
-          this.employeeService.employeeRevenue(this.revenueYear, this.employeeFilter).pipe(takeUntil(this.destroy$)).subscribe((employeeRevenueDump: any[]) => {
-            if (employeeRevenueDump.length === 6) {
-              this.employeeFound = true;
-              this.empObj = employeeRevenueDump;
-              this.empBaseDtl = this.empObj[0];
-              this.employeeBillingCurrency = this.empBaseDtl["currency"];
-              this.empLeave = this.empObj[1].leaves;
-              this.locHoliday = this.empObj[2].publicHolidays;
-              this.empSplWrk = this.empObj[3].specialWorkDays.empSplWrk;
-              this.locSplWrk = this.empObj[3].specialWorkDays.locSplWrk;
-              this.buffer = this.empObj[4].buffers;
-              this.revenue = this.empObj[5].revenue;
-              this.totalRevenue = 0;
-              this.totalCmiRevenue = 0;
-              this.sowForeCast = "";
-
-              let sowDate = this.empBaseDtl["sowStart"];
-              let splitStr = sowDate.split("-");
-              this.sowStart = splitStr[1] + "-" + splitStr[2];
-
-              sowDate = this.empBaseDtl["sowStop"];
-              splitStr = sowDate.split("-");
-              this.sowStop = splitStr[1] + "-" + splitStr[2];
-
-              sowDate = this.empBaseDtl["foreseenSowStop"];
-              if (sowDate.length > 0) {
-                splitStr = sowDate.split("-");
-                this.sowForeCast = splitStr[1] + "-" + splitStr[2];
-              }
-
-              let lSowStart = new Date(this.empBaseDtl["sowStart"]);
-              let lSowStop = new Date(this.empBaseDtl["sowStop"]);
-              let lSowForeCast = new Date(this.empBaseDtl["sowStop"]);
-              if (this.empBaseDtl["foreseenSowStop"].length > 0) {
-                lSowForeCast = new Date(this.empBaseDtl["foreseenSowStop"]);
-              }
-
-              let iRevenueYear = parseInt(this.revenueYear, 10);
-              if (iRevenueYear >= lSowStart.getFullYear() && iRevenueYear <= lSowStop.getFullYear() && iRevenueYear <= lSowForeCast.getFullYear()) {
-                this.revenueAvailable = true;
-              } else {
-                this.revenueAvailable = false;
-              }
-
-              this.revenue.forEach((revenueObj) => {
-                this.totalRevenue += revenueObj.revenueAmount;
-                this.totalCmiRevenue += revenueObj.cmiRevenueAmount;
-              });
-              this.router.navigate(['/employeeRevenue', this.revenueYear, this.employeeFilter]);
-            } else {
-              this.router.navigate(['/employeeRevenue', this.revenueYear, this.employeeFilter]);
-              this.filterOk = false;
-            }
-          });
-        } else {
-          this.router.navigate(['/employeeRevenue', this.revenueYear, this.employeeFilter]);
-        }
       });
+
+      if (this.filterOk === true) {
+        this.employeeService.employeeRevenue(this.revenueYear, this.employeeFilter).pipe(takeUntil(this.destroy$)).subscribe((employeeRevenueDump: any[]) => {
+          if (employeeRevenueDump.length === 2) {
+            this.employeeFound = true;
+            this.employee = employeeRevenueDump;
+            this.employeeDetail = this.employee[0];
+            this.employeeMonthlyDetail = this.employee[1].monthlyDetail;
+            this.employeeBillingCurrency = this.employeeDetail["currency"];
+            this.employeeMonthlyDetail.forEach((eachMonth) => {
+              this.revenue.push(eachMonth.revenue);
+            });
+            this.totalRevenue = 0;
+            this.totalCmiRevenue = 0;
+            this.sowForeCast = "";
+
+            let sowDate = this.employeeDetail["sowStart"];
+            let splitStr = sowDate.split("-");
+            this.sowStart = splitStr[1] + "-" + splitStr[2];
+
+            sowDate = this.employeeDetail["sowStop"];
+            splitStr = sowDate.split("-");
+            this.sowStop = splitStr[1] + "-" + splitStr[2];
+
+            sowDate = this.employeeDetail["forecastSowStop"];
+            if (sowDate.length > 0) {
+              splitStr = sowDate.split("-");
+              this.sowForeCast = splitStr[1] + "-" + splitStr[2];
+            }
+
+            let lSowStart = new Date(this.employeeDetail["sowStart"]);
+            let lSowStop = new Date(this.employeeDetail["sowStop"]);
+            let lSowForeCast = new Date(this.employeeDetail["sowStop"]);
+            if (this.employeeDetail["forecastSowStop"].length > 0) {
+              lSowForeCast = new Date(this.employeeDetail["forecastSowStop"]);
+            }
+
+            let iRevenueYear = parseInt(this.revenueYear, 10);
+            if (iRevenueYear >= lSowStart.getFullYear() && (iRevenueYear <= lSowStop.getFullYear() || iRevenueYear <= lSowForeCast.getFullYear())) {
+              this.revenueAvailable = true;
+            } else {
+              this.revenueAvailable = false;
+            }
+
+            this.revenue.forEach((revenueObj) => {
+              this.totalRevenue += revenueObj.revenueAmount;
+              this.totalCmiRevenue += revenueObj.cmiRevenueAmount;
+            });
+            this.router.navigate(['/employeeRevenue', this.revenueYear, this.employeeFilter]);
+          } else {
+            this.router.navigate(['/employeeRevenue', this.revenueYear, this.employeeFilter]);
+            this.filterOk = false;
+          }
+        });
+      } else {
+        this.router.navigate(['/employeeRevenue', this.revenueYear, this.employeeFilter]);
+      }
     }
   }
 
@@ -217,8 +216,11 @@ export class EmployeeDashboardComponent implements OnInit {
   }
 
   public employeeMonthDetailView(monthIndex: string): void {
+    let employeeMonthData = [];
+    employeeMonthData.push(this.employee[0]);
+    employeeMonthData.push(this.employee[1].monthlyDetail[monthIndex]);
     const dialogConfig = new MatDialogConfig();
-    /* dialogConfig.data = dashboardMonthData; */
+    dialogConfig.data = employeeMonthData;
     this.matDialog.open(EmpDashMonthDetailComponent, dialogConfig);
   }
 
