@@ -48,4 +48,17 @@ export class EmployeeService {
       return this.httpClient.get(getMinMaxYearUrl).pipe(catchError(this.handleError));
     }
   }
+
+  public getEmployeeMonthlyCalendar(revenueYear: string, monthIndex: string, employeeFilter: string) {
+    if (revenueYear === undefined || revenueYear === null || revenueYear === "") {
+      alert("Revenue year not provided");
+    } else if (monthIndex === undefined || monthIndex === null || monthIndex === "") {
+      alert("Month index is not provided");
+    } else if (employeeFilter === undefined || employeeFilter === null || employeeFilter === "") {
+      alert("Employee filter is not provided");
+    } else {
+      const employeeMonthlyCalendarUrl = "http://localhost:5454/employeeDailyCalendar?revenueYear=" + revenueYear + "&revenueMonth=" + monthIndex + "&employeeFilter=" + employeeFilter;
+      return this.httpClient.get(employeeMonthlyCalendarUrl).pipe(catchError(this.handleError));
+    }
+  }
 }
