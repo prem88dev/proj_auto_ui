@@ -5,7 +5,6 @@ import { takeUntil } from 'rxjs/operators';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { EmpDashMonthDetailComponent } from './emp-dash-month-detail/emp-dash-month-detail.component';
-import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-employee-dashboard',
@@ -48,8 +47,7 @@ export class EmployeeDashboardComponent implements OnInit {
     private employeeService: EmployeeService,
     private router: Router,
     private matDialog: MatDialog,
-    private route: ActivatedRoute,
-    private location: Location
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -216,11 +214,10 @@ export class EmployeeDashboardComponent implements OnInit {
   }
 
   public employeeMonthDetailView(monthIndex: string): void {
-    let employeeMonthData = [];
-    employeeMonthData.push(this.employee[0]);
-    employeeMonthData.push(this.employee[1].monthlyDetail[monthIndex]);
+    let calendarParam = [];
+    calendarParam.push({"revenueYear": this.revenueYear, "monthIndex": monthIndex, "employeeFilter": this.employeeFilter});
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.data = employeeMonthData;
+    dialogConfig.data = calendarParam;
     this.matDialog.open(EmpDashMonthDetailComponent, dialogConfig);
   }
 
