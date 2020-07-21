@@ -1,9 +1,122 @@
-<tr>
-   <td>
-      <h2 mat-dialog-title style="text-align: right; font-style: italic; font-size: 1.5vw; padding-right: 1vw;">{{monthData.monthName | date: 'MMMM - yyyy'}}</h2>
-   </td>
-   <td style="font-style: italic;" *ngIf="soStart === true;">( SO Start Month )</td>
-   <td style="font-style: italic;" *ngIf="soStop === true;">( SO End Month )</td>
-   <td style="font-style: italic;" *ngIf="soForecast === true;">( SO Forecast End Month )</td>
-   <td style="font-style: italic;" *ngIf="nonRev === true;">( Non-Revenue Month )</td>
-</tr>
+<ng-container *ngIf="dataBuilt === true">
+   <tr style="font-style: italic;">
+      <td>
+         <h2 mat-dialog-title style="text-align: right; font-style: italic; font-size: 1.5vw; padding-right: 1vw;">{{monthName | date: 'MMMM - yyyy'}}</h2>
+      </td>
+      <td *ngIf="soStart === true;">( SO Starts on {{employeeBaseDetail["sowStart"] | date: 'd-MMM-yyyy'}} )</td>
+      <td *ngIf="soStop === true;">( SO Ends on {{employeeBaseDetail["sowStop"] | date: 'd-MMM-yyyy'}} )</td>
+      <td *ngIf="soForecast === true;">( SO Forecasted upto {{employeeBaseDetail["forecastSowStop"] | date: 'd-MMM-yyyy'}} )</td>
+      <td *ngIf="nonRev === true;">( Non-Revenue Month )</td>
+   </tr>
+   <mat-dialog-content style="font-style: italic; font-size: 1.2vw;">
+      <tr>
+         <td style="width: 25vw; text-align: center;">Description</td>
+         <td style="width: 7vw; text-align: right;">Revenue</td>
+      </tr>
+      <p></p>
+   </mat-dialog-content>
+   <mat-dialog-content style="font-style: italic;">
+      <tr>
+         <td style="width: 25vw;">Total work hours&thinsp;:&emsp;<span style="font-weight: bold;">{{totalWorkHours}}</span>&ensp;hours</td>
+         <td style="text-align: right; width: 7vw;">{{((totalWorkHours * billingRatePerHour)/100) | currency: billingCurrency ? billingCurrency : "'':''"}}
+         </td>
+      </tr>
+      <p></p>
+      <tr>
+         <td style="width: 25vw;">Location holidays&thinsp;:&emsp;<span style="font-weight: bold;">{{(locLeaveHour ? locLeaveHour : 0)}}</span>&ensp;hours</td>
+         <td style="text-align: right; width: 7vw;"> -
+            {{(((locLeaveHour ? locLeaveHour : 0)  * billingRatePerHour)/100) | currency: billingCurrency ? billingCurrency : "'':''"}}
+         </td>
+      </tr>
+      <ng-container *ngIf="locationLeave.length > 0; then loopLocLeave;"></ng-container>
+      <p></p>
+      <tr>
+         <td style="width: 25vw;">Location special work hour&thinsp;:&emsp;<span style="font-weight: bold;">{{(locAddWorkHour ? locAddWorkHour : 0)}}</span>&ensp;hours</td>
+         <td style="text-align: right; width: 7vw;"> +
+            {{(((locAddWorkHour ? locAddWorkHour : 0)  * billingRatePerHour)/100) | currency: billingCurrency ? billingCurrency : "'':''"}}
+         </td>
+      </tr>
+      <ng-container *ngIf="locAddWork.length > 0; then loopLocAddWork;"></ng-container>
+      <p></p>
+      <tr>
+         <td style="width: 25vw;">Employee allocated &thinsp;:&emsp;<span style="font-weight: bold;">{{allocationHours}}</span>&ensp;hours</td>
+         <td style="text-align: right; width: 7vw;">{{((allocationHours * billingRatePerHour)/100) | currency: billingCurrency ? billingCurrency : "'':''"}}
+         </td>
+      </tr>
+      <p></p>
+      <tr>
+         <td style="width: 25vw;">Personal leaves&thinsp;:&emsp;<span style="font-weight: bold;">{{(empLeaveHour ? empLeaveHour : 0)}}</span>&ensp;hours</td>
+         <td style="text-align: right; width: 7vw;"> -
+            {{(((empLeaveHour ? empLeaveHour : 0)  * billingRatePerHour)/100) | currency: billingCurrency ? billingCurrency : "'':''"}}
+         </td>
+      </tr>
+      <ng-container *ngIf="employeeLeave.length > 0; then loopEmpLeave;"></ng-container>
+      <p></p>
+      <tr>
+         <td style="width: 25vw;">Addtional work hour&thinsp;:&emsp;<span style="font-weight: bold;">{{(empAddWorkHour ? empAddWorkHour : 0)}}</span>&ensp;hours</td>
+         <td style="text-align: right; width: 7vw;"> +
+            {{(((empAddWorkHour ? empAddWorkHour : 0)  * billingRatePerHour)/100) | currency: billingCurrency ? billingCurrency : "'':''"}}
+         </td>
+      </tr>
+      <ng-container *ngIf="empAddWork.length > 0; then loopEmpAddWork;"></ng-container>
+      <p></p>
+      <tr>
+         <td style="width: 25vw;">Buffer hours&thinsp;:&emsp;<span style="font-weight: bold;">{{bufferHour ? bufferHour : 0}}</span>&ensp;hours</td>
+         <td style="text-align: right; width: 7vw;"> - {{(((bufferHour ? bufferHour : 0)  * billingRatePerHour)/100) | currency: billingCurrency ? billingCurrency : "'':''"}}
+         </td>
+      </tr>
+   </mat-dialog-content>
+   <ng-template #loopLocLeave>
+      <tr *ngFor="let leaveObj of locationLeave">
+         <ng-container *ngIf="leaveObj.startDate === leaveObj.stopDate; then oneDayLeave; else leaveRange"></ng-container>
+         <ng-template #oneDayLeave>
+            <td style="width: 25vw;padding-left: 2vw;">{{leaveObj.startDate | date: 'd (EEE)'}} - {{leaveObj.description}} <span *ngIf='leaveObj.halfDay === "Y"'>(H)</span>
+            </td>
+         </ng-template>
+         <ng-template #leaveRange>
+            <td style="width: 25vw;padding-left: 2vw;">{{leaveObj.startDate | date: 'd (EEE)'}} to {{leaveObj.stopDate | date: 'd (EEE)'}} - {{leaveObj.description}}
+               <span *ngIf='leaveObj.halfDay === "Y"'>(H)</span>
+            </td>
+         </ng-template>
+      </tr>
+   </ng-template>
+   <ng-template #loopEmpLeave>
+      <tr *ngFor="let leaveObj of employeeLeave">
+         <ng-container *ngIf="leaveObj.startDate === leaveObj.stopDate; then oneDayLeave; else leaveRange"></ng-container>
+         <ng-template #oneDayLeave>
+            <td style="width: 25vw;padding-left: 2vw;">{{leaveObj.startDate | date: 'd (EEE)'}} - {{leaveObj.reason}} <span *ngIf='leaveObj.halfDay === "Y"'>(H)</span></td>
+         </ng-template>
+         <ng-template #leaveRange>
+            <td style="width: 25vw;padding-left: 2vw;">{{leaveObj.startDate | date: 'd (EEE)'}} to {{leaveObj.stopDate | date: 'd (EEE)'}} - {{leaveObj.reason}}
+               <span *ngIf='leaveObj.halfDay === "Y"'>(H)</span>
+            </td>
+         </ng-template>
+      </tr>
+   </ng-template>
+   <ng-template #loopEmpAddWork>
+      <tr *ngFor="let workObj of empAddWork">
+         <ng-container *ngIf="workObj.startDate === workObj.stopDate; then oneDayLeave; else leaveRange"></ng-container>
+         <ng-template #oneDayLeave>
+            <td style="width: 25vw;padding-left: 2vw;">{{workObj.startDate | date: 'd (EEE)'}} - {{workObj.reason}} <span *ngIf='workObj.halfDay === "Y"'>(H)</span></td>
+         </ng-template>
+         <ng-template #leaveRange>
+            <td style="width: 25vw;padding-left: 2vw;">{{workObj.startDate | date: 'd (EEE)'}} to {{workObj.stopDate | date: 'd (EEE)'}} - {{workObj.reason}}
+               <span *ngIf='workObj.halfDay === "Y"'>(H)</span>
+            </td>
+         </ng-template>
+      </tr>
+   </ng-template>
+   <ng-template #loopLocAddWork>
+      <tr *ngFor="let workObj of locAddWork">
+         <ng-container *ngIf="workObj.startDate === workObj.stopDate; then oneDayLeave; else leaveRange"></ng-container>
+         <ng-template #oneDayLeave>
+            <td style="width: 25vw;padding-left: 2vw;">{{workObj.startDate | date: 'd (EEE)'}} - {{workObj.reason}} <span *ngIf='workObj.halfDay === "Y"'>(H)</span></td>
+         </ng-template>
+         <ng-template #leaveRange>
+            <td style="width: 25vw;padding-left: 2vw;">{{workObj.startDate | date: 'd (EEE)'}} to {{workObj.stopDate | date: 'd (EEE)'}} - {{workObj.reason}}
+               <span *ngIf='workObj.halfDay === "Y"'>(H)</span>
+            </td>
+         </ng-template>
+      </tr>
+   </ng-template>
+</ng-container>
