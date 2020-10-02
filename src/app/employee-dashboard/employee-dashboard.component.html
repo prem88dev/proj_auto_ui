@@ -45,7 +45,7 @@
             </ng-template>
             <ng-template #revSideNavListEmp>
               <ng-container *ngFor="let empObj of projEmpObj.workforce; let lastVal = last">
-                <mat-list-item (click)="getEmployeeRevenue(revenueYear, empObj.employeeLinker)" style="font-style: italic;">
+                <mat-list-item (click)="getEmployeeRevenue(revenueYear, empObj.employeeLinker)" style="font-style: italic; font-size: 1.1vw;">
                   {{empObj.firstName}},&ensp;{{empObj.lastName}}
                   <mat-divider *ngIf="!lastVal"></mat-divider>
                 </mat-list-item>
@@ -157,7 +157,7 @@
         </div>
         <div style="float: left; width: 28%">
           <td style="font-weight: lighter;">Windows ID&thinsp;:&nbsp;&nbsp;</td>
-          <ng-container *ngIf="employeeDetail.winId; then showWindowsId; else noData"></ng-container>
+          <ng-container *ngIf="employeeDetail.windowsId; then showWindowsId; else noData"></ng-container>
           <ng-template #showWindowsId>
             <td style="font-size: 1.5vw">{{employeeDetail.windowsId}}</td>
           </ng-template>
@@ -220,6 +220,7 @@
   </div>
   <p></p>
   <div style="float: left;">Click on each month to view detailed summary</div>
+  <br>
   <div class="flex-row" style="width: 80%; padding-left: 0px;">
     <ng-container *ngFor="let revenueObj of revenue; let revObjIdx = index;">
       <ng-container *ngIf="revObjIdx == 0; then janFlex; else febJunFlexCheck"></ng-container>
